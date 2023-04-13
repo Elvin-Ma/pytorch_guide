@@ -1,2 +1,7 @@
-# pytorch_tutorial
-pytorch samples to help student learning quikly
+pythoch
+========
+
+让我们学习pytorch吧
+------------------
+
+
