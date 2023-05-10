@@ -12,11 +12,11 @@
   10. tensorboard guide
   11. distribute guide
   12. c++ train
-  13. model deploy guide
-    - flash
-    - docker
-    - cloud
-    - c++
+  13. model deploy guide  
+  - flash  
+  - docker  
+  - cloud  
+  - c++
 
 # Train model by your self
 ## three step
