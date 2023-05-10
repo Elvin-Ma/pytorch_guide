@@ -1,44 +1,29 @@
-# README.md 学习
+# pytorch tutorial basic
+  0. install guide
+  1. tensor guide
+  2. autograd guide
+  3. model_build guide
+  4. data guide
+  5. transforms guide
+  6. save_load guide
+  7. model train guide
 
-*step1  
-# 一级标题    
-## 二级标题    
-### 三级标题    
-#### 四级标题    
-##### 五级标题 
-###### 六级标题   
+# pytorch tutorial advanced
+  10. tensorboard guide
+  11. distribute guide
+  12. c++ train
+  13. model deploy guide
+    - flash
+    - docker
+    - cloud
+    - c++
 
-*step2*
-直接回车不能换行，可通过以下三种方式实现换行：
-方法1：在行末尾添加<br>
-方法2：在行末尾添加两个空格。（推荐）
-方法3：在两行之间插入一个空行。
+# Train model by your self
+## three step
+  1. tutorial
+  2. example
+  3. well know website
 
-*step3:  强调
-斜体：*强调*
-_强调_<br>
-**粗体**
-***粗体***
-
-step4：代码<br>
-`code`
-'''py
-python
-'''
-
-step5: 表格
-
-表头 | 表头 | 表头
----- / --- / -----
-内容 | 内容 | 内容
-
-step6: 无序列表<br>
-* 项目1  <br>
-* 项目2  
-
-step7: 多级结构
-> 数据结构
-> > 树
 
 
 
