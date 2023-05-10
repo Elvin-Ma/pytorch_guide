@@ -15,3 +15,6 @@
 - dtype
 - device
 - stride
+
+# 扩展
+*data到底存储在哪里呢？*
