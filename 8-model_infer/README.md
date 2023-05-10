@@ -25,7 +25,7 @@
 
 需要注意的是，JIT图和eager mode下的计算图并不完全相同，因为JIT图是静态构建的，而eager mode下的计算图是动态构建的。这意味着，在某些情况下，两者可能会有一些细微的差异，例如操作顺序、内存布局等。因此，在使用JIT编译器时，建议使用与eager mode下相同的数据集和参数进行测试，以确保结果的正确性。 **
 
-"""python
+```python
 import torch
 
 # Define a PyTorch model
@@ -53,7 +53,7 @@ script_module.eval()
 input_tensor = torch.tensor([[1.0]])
 output_tensor = script_module.forward(input_tensor)
 print(output_tensor)  # tensor([[0.0862]], grad_fn=<AddmmBackward>)
-"""
+```
 
 # pytorch export onnx 和 jit：
 * torch.jit.trace()和torch.onnx.export()是PyTorch中用于将模型转换为可部署形式的两种不同方法。
