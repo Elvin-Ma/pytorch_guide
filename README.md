@@ -13,7 +13,7 @@
   11. distribute guide
   12. c++ train
   13. model deploy guide  
-    - flash
+    -flash  
     - docker
     - cloud
     - c++
