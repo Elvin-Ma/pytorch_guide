@@ -1,5 +1,5 @@
 # dynamic and static graph
-* PyTorch的动态图（eager execution）和TensorFlow的静态图:
+*PyTorch的动态图（eager execution）和TensorFlow的静态图:
 - 是两种不同的计算图构建方式;
 - 它们最核心的区别在于计算图的构建和执行方式;
 - 在PyTorch的动态图中，每个操作都是立即执行的(在Python中编写代码的同时进行计算，这使得代码编写和调试非常方便).
@@ -8,8 +8,9 @@
 - 相比之下，TensorFlow的静态图需要先定义计算图的结构，然后再将数据输入到计算图中进行计算。
 - 这种静态构建计算图的方式使得TensorFlow能够进行更多的优化和预处理，例如算子融合、图优化等。
 - 同时，在计算图构建完成后，TensorFlow可以将计算图编译为高效的本机代码，以提高计算效率。
-- 这种静态构建计算图的方式使得TensorFlow非常适合生产环境和大规模训练任务。 *
+- 这种静态构建计算图的方式使得TensorFlow非常适合生产环境和大规模训练任务.*
 
+**conclusion**
 ** 结论 **<br>
 因此，PyTorch的动态图和TensorFlow的静态图在计算图的构建和执行方式上有着本质的区别。动态图更灵活，更适合快速原型开发和实验，而静态图则更加高效，更适合生产环境和大规模训练任务。
 
@@ -23,6 +24,36 @@
 当您使用torch.jit.trace()函数将PyTorch模型转换为JIT图时，最终得到的是一个静态的计算图，其中所有的操作都被编译为本机代码，从而可以在生产环境中高效地运行。与eager mode下的计算图相比，JIT图的构建和优化过程需要一些额外的时间，但是可以获得更高的性能和更小的内存占用。
 
 需要注意的是，JIT图和eager mode下的计算图并不完全相同，因为JIT图是静态构建的，而eager mode下的计算图是动态构建的。这意味着，在某些情况下，两者可能会有一些细微的差异，例如操作顺序、内存布局等。因此，在使用JIT编译器时，建议使用与eager mode下相同的数据集和参数进行测试，以确保结果的正确性。 **
+
+"""python
+import torch
+
+# Define a PyTorch model
+class MyModel(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.linear = torch.nn.Linear(1, 1)
+
+    def forward(self, x):
+        return self.linear(x)
+
+# Create an instance of the model
+model = MyModel()
+
+# Trace the model and save to file
+x = torch.randn(1, 1)
+traced_model = torch.jit.trace(model, x)
+traced_model.save("model.pt")
+
+# Load the traced model and convert to script module
+script_module = torch.jit.load("model.pt")
+script_module.eval()
+
+# Use the script module for inference
+input_tensor = torch.tensor([[1.0]])
+output_tensor = script_module.forward(input_tensor)
+print(output_tensor)  # tensor([[0.0862]], grad_fn=<AddmmBackward>)
+"""
 
 # pytorch export onnx 和 jit：
 * torch.jit.trace()和torch.onnx.export()是PyTorch中用于将模型转换为可部署形式的两种不同方法。
