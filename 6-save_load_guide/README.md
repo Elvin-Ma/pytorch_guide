@@ -129,6 +129,9 @@ torch.onnx.export(model, input_tensor, "model.onnx")
 # what is state_dict
 **reference: what_is_state_dict.py**
 
-
+# 保存参数和保存整个模型的区别
+因此，当保存整个模型时，PyTorch 会将模型的类定义、构造函数参数、层结构、参数、缓存和其他状态信息一并保存到文件中，
+以便在之后恢复整个模型。而当只保存模型的参数状态时，PyTorch 只会保存模型的参数、缓存和其他状态信息，
+而不包括模型的类定义、构造函数参数和层结构等其他信息。
 
 
