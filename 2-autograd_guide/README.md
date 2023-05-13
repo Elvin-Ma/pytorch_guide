@@ -99,15 +99,34 @@ out.backward(torch.ones_like(out), retain_graph=True)
 print(f"\nCall after zeroing gradients\n{inp.grad}")
 ```
 
-**梯度清0**
-- x.grad.zero_()
-- model.zero_grad()
+# auto grad 问题解答
+- 默认保存梯度的是 叶子节点: 整个网络最外层的tensor
+- 网络的input(是)，网络中的weight(是)，网络中的bias(是)
+- z = torch.matmul --> 算子（中间activation）
+- .backward(上一层的梯度)
+- loss 的 backward 不需要传入梯度, 直接.backward()就可以
+- 对谁（tensor）进行backward: 从 Tensor 开始启动的
+- 反向图: torch.autograd.backward
 
-**获取中间tensor的梯度**
-- mid_tensor.retain_grad()
-- mid_tensor.register_hook(save_grad)
+# 梯度累加 和 梯度清0**
+- 多条路径：梯度累加 --> 正确的
+- 多次run backward的梯度累加 --> 我们应该避免
+- 怎么样避免： tensor.grad.zero_() 
+- 下节课：model.zero_grad()
 
-# 自定义自己的反向传播函数
+**中间tensor的梯度控制**
+- middle_tensor.register_hook(hook)
+- register_hook : 钩子注册函数
+- hook: 钩子。类型：函数（lambda 函数 和 自定义函数都可以）
+- hook 函数有一个参数：grad
+- 这个grad 就是上一层传下来的梯度值
+- 拿到这个梯度值，就可以进行操作（改变、保存）
+- mid_tensor.retain_grad() ：不释放tensor的梯度
+
+# 大部分正向算子都对应一个反向算子
+[对应关系](https://github.com/pytorch/pytorch/blob/main/tools/autograd/derivatives.yaml)
+
+# customer 自定义自己的反向传播函数
 ```python
  class Exp(Function):
      @staticmethod
@@ -124,12 +143,13 @@ print(f"\nCall after zeroing gradients\n{inp.grad}")
  # Use it by calling the apply method:
  output = Exp.apply(input)
  ```
-
  # examples
  - /tutorials/beginner_source/examples_autograd/polynomial_custom_function.py
 
- # 扩展
- **autograd是什么**
+ # 扩展 extension（不需要去看）
+ - grad_fn 和 grad 等相关信息 是放到Tensor中的；
+  
+ ## autograd是什么
 - variable.h: struct TORCH_API AutogradMeta
 - grad_ ：存储当前Variable实例的梯度，本身也是一个Variable。
 - grad_fn ：是个Node实例，非叶子节点才有。通过 grad_fn() 方法来访问，实际上，PyTorch中就是通过 grad_fn是否为空 来判断一个Variable是否是leaf variable。
@@ -141,13 +161,12 @@ print(f"\nCall after zeroing gradients\n{inp.grad}")
 - output_nr_：是个数字。output_nr_表明是 Node 的第几个输出，比如为 0 就 表明这个Variable是Node 的第 1 个输出。
 - base_ ：是view的base variable。
 
-**tensor 中的autogradmeta**
+## tensor 中的autogradmeta**
 - 每个tensor都有一个 autogradmeta：
 - TensorBase.h：c10::intrusive_ptr<TensorImpl, UndefinedTensorImpl> impl_;
 - std::unique_ptr<c10::AutogradMetaInterface> autograd_meta_ = nullptr;
 
-**grad_fun**
+## grad_fun
 - grad_fn 属性还包含 _saved_self 和 _saved_other 两个属性;
 - _saved_self: 保存计算当前张量梯度所需要的计算图中的自身张量；
 - _saved_other: 保存计算当前张量梯度所需要的计算图中的其他张量;
-
