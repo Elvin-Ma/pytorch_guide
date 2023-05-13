@@ -1,12 +1,33 @@
-# 自动微分机制
-**反向传播算法**
-*根据loss相对于给定参数的梯度来调整parameters(模型权重)*
+# pytorch doc
+[pytorch doc](https://pytorch.org/docs/stable/index.html)
 
-*为了计算这些梯度，PyTorch有一个内置的微分引擎，名为torch.autograd。*
-*它支持任何计算图的梯度自动计算。*
+# 自动微分机制(auto grad)
+- 求梯度
+- 需不需要我们自己来求 no 
+- auto grad 是pytorch非常强大的功能（动态图）
+- pytroch 动态图 和 tensorflow 静态图
 
-**example**
+#反向传播算法
+- pytorch ：正向（forward） 和 反向 （backward）
+- 反向 和 autograd 有密切的关系
+- 因为反向求梯度的
+- 根据loss相对于给定参数的梯度来调整parameters(模型权重)
+- 为了计算这些梯度，PyTorch有一个内置的微分引擎，名为torch.autograd。
+- 它支持任何计算图的梯度自动计算。
+- 这个torch.autograd 对用户不可知
 
+# tensor 的梯度
+- requires_grad: 设置我们是否需要求这个tensor的梯度
+- [requres_grad 链接接](site-packages/torch/_C/_VariableFunctions.pyi)
+- 只有浮点、复数可以设置 require grdients
+- reqires_grad: 告诉torch 我这个tensor 需要计算梯度的，正向的时候，torch会做额外的一些事情；
+- requires_grad: default = False
+- 输入的tensor 只要有一个requires_grad=True, output.requires_grad = True
+- 中间的tensor 的 梯度会计算，但不保存
+- weight：不释放，中间activation的梯度最好释放；
+- 因为内存；GPU显存是很宝贵的。
+
+#example：全连接层梯度求解
 ```python
 x = torch.ones(5)  # input tensor
 y = torch.zeros(3)  # expected output
@@ -20,6 +41,17 @@ loss.backward()
 print(w.grad)
 print(b.grad)
 ```
+
+# autograd 原理
+![官网原理图](https://github.com/pytorch/pytorch/raw/main/docs/source/_static/img/dynamic_graph.gif)
+
+# 反向求导原理
+- grad_fn(grad function): 反向传播用到的函数；
+- grad_fn 在正向的时候自动生成（requires_grad=True时)；
+- .backend(）触发反向求导操作
+- 求导操作针对整个反向图来进行，而不是仅仅一个算子；
+- 冻结权重：.requires_grad = False
+- weight 是需要计算权重并保存梯度的, matmul等算子如何设置weight和act???
 
 **关闭梯度求导**
 
