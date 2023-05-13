@@ -77,21 +77,78 @@ def tensor_to_demo():
 def id_with_ptr():
   tensor_0 = torch.ones(4, 6)
   tensor_1 = tensor_0.reshape(3, 8)
-
-  # meta_data 发生改变，id 就会变
-  print("tensor_0 id: ", id(tensor_0))
-  print("tensor_1 id: ", id(tensor_1))
-  # ptr 只关注raw_data
-  print("tensor_0 data_ptr: ", tensor_0.data_ptr())
-  print("tensor_1 data_ptr: ", tensor_1.data_ptr())
   
-  print("tensor_0 data_ptr: ", tensor_0.data_ptr)
-  print("tensor_1 data_ptr: ", tensor_1.data_ptr)
+  '''
+  # print("tensor0 data_ptr: ", id(tensor_0[0, 0]))
+  # print("tensor1 data_ptr: ", id(tensor_0[0][0]))
+  
+  # print("tensor0 data_ptr: ", id(tensor_0[0, 0]))
+  # print("tensor1 data_ptr: ", id(tensor_0[0][0]))
+  
+  # print("tensor_0 data_ptr: ", tensor_0.data_ptr())
+  '''
+  
+  # meta_data 发生改变，id 就会变
+  # print("tensor_0 id: ", id(tensor_0))
+  # print("tensor_1 id: ", id(tensor_1))
+  # # ptr 只关注raw_data
+  # print("tensor_0 data_ptr: ", tensor_0.data_ptr())
+  # print("tensor_1 data_ptr: ", tensor_1.data_ptr())
+  
+  # print("tensor_0 data_ptr: ", tensor_0.data_ptr)
+  # print("tensor_1 data_ptr: ", tensor_1.data_ptr)
+  
+def broadcast_demo():
+  a = torch.rand(3, 1, 4, 2, 1)
+  b = torch.randn(4, 1, 1, 5)
+  c = a + b
+  
+def inplace_demo():
+  a = torch.rand(3, 1, 4, 2, 1)
+  b = a.add_(5) # inplace 操作 一定要小心
+  c = a.add(10)
+  print("tensor_a data_ptr: ", a.data_ptr())
+  print("tensor_b data_ptr: ", b.data_ptr())
+  print("tensor_c data_ptr: ", c.data_ptr())
+   
+def stride_demo():
+  a = torch.randn(2, 3)
+  b = a.reshape(3, 2)
+  c = a.T
+  d = c.contiguous() # 1. 重新申请了内存 2、数据重排
+  
+  print("a storage: \n", a.storage())
+  print("c storage: \n", c.storage())
+  print("d storage: \n", d.storage())
+  
+  print("a data_ptr: ", a.data_ptr())
+  print("c data_ptr: ", c.data_ptr())
+  print("d data_ptr: ", d.data_ptr())
+  
+  # d = torch.rand(3, 4, 5)
+  # e = d.permute(0, 2, 1)
+  
+  # print("a shape: ", a.shape)
+  # print("a stride: ", a.stride())
+  # print("b shape: ", b.shape)
+  # print("b stride: ", b.stride())
+  # print("c shape: ", c.shape)
+  # print("c stride: ", c.stride())
+  
+def reshape_vs_view():
+  a = torch.randn(4, 6)
+  b = a.T
+  c = b.reshape(3, 8)
+  d = b.contiguous().view(3, 8)
   
 if __name__ == "__main__":
   # raw_data_demo()
   # tensor_struct()
   # numpy_with_torch_tensor()
   # tensor_to_demo()
-  id_with_ptr()
+  # id_with_ptr()
+  # broadcast_demo()
+  # inplace_demo()
+  # stride_demo()
+  reshape_vs_view()
   print("run tensor_demo.py successfully !!!")
