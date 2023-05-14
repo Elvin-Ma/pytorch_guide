@@ -159,7 +159,6 @@ class A(nn.Module):
         print("=================backward_hook")
         self.data_grad.append((grad_input, grad_output))     
         
-            
 def module_hook_demo():
     model = A()
     input = torch.randn(5, 10)
