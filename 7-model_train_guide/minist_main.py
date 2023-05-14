@@ -144,9 +144,12 @@ def main():
     
     # step 5: 优化器及学习率配置
     optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
+    # optimizer = optim.Adam(model.parameters(), lr=args.lr)
+    # optimizer = optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
+    
     scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
     
-    for epoch in range(1, args.epochs + 1):
+    for epoch in range(1, args.epochs + 2):
         train(args, model, device, train_loader, optimizer, epoch)
         test(model, device, test_loader)
         scheduler.step()

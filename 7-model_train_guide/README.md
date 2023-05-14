@@ -50,3 +50,13 @@ optimizer.step()
 - 测试集千万不能参与到训练中，否则就起不到测试效果；
 - 最终模型效果要看的是测试集；
 - 测试集还是检测模型过不过拟合的重要手段
+
+# 课后模型调优
+- batch_size
+- bn, dropout
+- learn_rate : schedule
+- epoch : 最优的epoch
+- optimzier
+- 激活函数
+- 换损失函数
+- 正则化
