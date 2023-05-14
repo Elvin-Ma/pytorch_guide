@@ -195,7 +195,9 @@ for name, param in model.named_parameters():
 - optimizer : 操作的对象就是 module 里的 Parameters（tensor的子类）
 - optimizer.zero_grad() 和 module 的zero_grad都完成梯度清0；
 - step() 更新参数
-- 
+- 有Parameter的算子（module）一定要放到__init__里；
+- relu 没有任何可学习参数的函数或module，放到forward里也ok；
+- __init__中定义的层，在forward里重复使用会发生权重共享；
 
 # 函数对比
 torch.conv2d()
@@ -255,80 +257,5 @@ for param in tinymodel.linear2.parameters():
 - _load_state_dict_pre_hooks：存储模型中所有加载状态字典前的钩子函数；、
 - _backward_hooks：反向传播钩子可以在模型的输入梯度或输出梯度通过某一层之后被调用，从而可以获取梯度信息并对其进行处理或记录。
 
-**_backward_hooks 案例**
-```python
-import torch
-from torch import nn
-
-# 定义一个简单的模型
-class MyModel(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.fc1 = nn.Linear(10, 5)
-        self.fc2 = nn.Linear(5, 1)
-
-    def forward(self, x):
-        x = torch.relu(self.fc1(x))
-        x = self.fc2(x)
-        return x
-
-# 定义一个反向传播钩子函数
-def my_backward_hook(module, grad_input, grad_output):
-    print(f"backward hook called for {module}")
-    print(f"grad_input: {grad_input}")
-    print(f"grad_output: {grad_output}")
-
-# 创建模型和输入数据
-model = MyModel()
-x = torch.randn(1, 10)
-
-# 注册反向传播钩子
-handle = model.fc1.register_backward_hook(my_backward_hook)
-
-# 执行模型前向传播和反向传播
-y = model(x)
-loss = y.mean()
-loss.backward()
-
-# 移除反向传播钩子
-handle.remove()
-```
-**_forward_pre_hooks 案例**
-```python
-import torch
-from torch import nn
-
-# 定义一个简单的模型
-class MyModel(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.fc1 = nn.Linear(10, 5)
-        self.fc2 = nn.Linear(5, 1)
-
-    def forward(self, x):
-        x = torch.relu(self.fc1(x))
-        x = self.fc2(x)
-        return x
-
-# 定义一个前置钩子函数
-def my_forward_pre_hook(module, input):
-    print(f"forward pre-hook called for {module}")
-    print(f"input: {input}")
-
-# 创建模型和输入数据
-model = MyModel()
-x = torch.randn(1, 10)
-
-# 注册前置钩子
-handle = model.fc1.register_forward_pre_hook(my_forward_pre_hook)
-
-# 执行模型前向传播
-y = model(x)
-
-# 移除前置钩子
-handle.remove()
-```
-
 **冻结一部分参数**
-requires_grad
-
+net.fc1.weight.requires_grad = False

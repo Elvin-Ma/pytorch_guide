@@ -133,21 +133,48 @@ class A(nn.Module):
         self.fc1 = nn.Linear(10, 10)  # 5*5 from image dimension
         self.fc2 = nn.Linear(10, 84)
         self.fc3 = nn.Linear(84, 10)
+        self.data = []
+        self.data_grad = []
+        self.fc1.register_forward_pre_hook(self.forward_pre_hook)
+        self.fc1.register_forward_hook(self.forward_hook)
+        self.fc1.register_full_backward_hook(self.backward_hook)
         
     def forward(self, input):
         x = self.fc1(input)
         x = torch.relu(x)
-        x = self.fc1(x)
-        x = nn.Linear(10, 10)(x)
         x = self.fc2(x)
         x = self.fc3(x)
-        
         return x
+    
+    def forward_pre_hook(self, module, input):
+        self.data.append(input)
+        print("===============data: {}\n".format(input[0][0]))
+        # return input * 2
+        
+    def forward_hook(self, module, input, output):
+        self.data.append(output)
+        # print("===========fc1 output: ", output)
+        
+    def backward_hook(self, module, grad_input, grad_output):
+        print("=================backward_hook")
+        self.data_grad.append((grad_input, grad_output))     
+        
+            
+def module_hook_demo():
+    model = A()
+    input = torch.randn(5, 10)
+    output = model(input)
+    output.backward(torch.ones_like(output))
+    # print("model.data count: {}\n".format(len(model.data)))
+    print("model.data_grad count: {}\n".format(len(model.data_grad)))
+    print("output shape: ", output.shape)
             
 if __name__ == "__main__":
     # run_network()
     # forward_demo()
     # sequential_demo()
     # model_end2end()
-    function_compare()
+    # function_compare()
+    module_hook_demo()
+    
     print("run module_demo.py successfully !!!")
