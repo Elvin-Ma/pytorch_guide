@@ -1,99 +1,34 @@
 # save and load tensor
+
+# 课后作业： ？？？
+**一个模型通过torch.save(model, "model.pt")完整保存下来；**
+**把这个模型直接给第三方；**
+**第三方能直接运行这个模型吗？？？**
+
+# 保存及加载整个模型
 ```python
-import torch
-
-x = torch.rand(3, 4)
-torch.save(x, 'tensor.pt')
-
+torch.save(model, "mnist.pt")
 x = torch.load('tensor.pt')
-print(x)
-
-x = torch.rand(3, 4)
-y = torch.ones(2, 2)
-z = torch.zeros(1, 5)
-
-torch.save({'x': x, 'y': y, 'z': z}, 'tensors.pt')
-
-data = torch.load('tensors.pt')
-x_new = data['x']
-y_new = data['y']
-z_new = data['z']
-```
-# save and load model(structure and param)
-```python
-import torch
-import torchvision.models as models
-
-# 创建一个预训练的 resnet18 模型
-model = models.resnet18(pretrained=True)
-
-# 保存整个模型
-torch.save(model, 'resnet18_full.pth')
-
-#加载整个模型
-model = torch.load('resnet18_full.pth')
 ```
 
-# 仅保存模型参数
-
+# 保存及加载模型参数
 ```python
-import torch
-import torchvision.models as models
-
-model = models.resnet18(pretrained=True)
-
-# 保存模型参数
-torch.save(model.state_dict(), 'resnet18_params.pth')
-
-state_dict = torch.load('resnet18_params.pth')
-
-# 必须先创建一个相同结构的模型
-model = models.resnet18()
-
-# 加载参数
-model.load_state_dict(state_dict)
-
+torch.save(model.state_dict(), "mnist_para.pth")
+param = torch.load("mnist_para.pth")
+model.load_state_dict(param)
 ```
+# 注意
+- pt 和 pth 用谁都行
+- state_dict : 只保存模型权重
+- torch.save 和 torch.load 还可以保存 tensor 和 optimizer
 
-# 加载数据到GPU
+# 加载到GPU
+model = torch.load('mnist.pt', map_location=device)
 
+# 保存和加载 ckpt
 ```python
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = torch.load('model.pth', map_location=device)
-
-# 如果使用 CPU
-model = torch.load('model.pth', map_location=torch.device('cpu'))
-```
-
-# save and load ckpt
-**.ckpt 文件通常包含整个训练状态，包括模型参数、优化器状态、学习率、训练轮数和其他训练信息等**
-```python
-import torch
-import torch.nn as nn
-import torch.optim as optim
-
-model = MyModel()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
-criterion = nn.CrossEntropyLoss()
-
-for epoch in range(num_epochs):
-    # ...
-    # 训练模型
-    # ...
-    if epoch % save_freq == 0:
-        # 保存 checkpoint 文件
-        checkpoint = {
-            'epoch': epoch,
-            'model_state_dict': model.state_dict(),
-            'optimizer_state_dict': optimizer.state_dict(),
-            'loss': loss.item(),
-            # 可以添加其他训练信息
-        }
-        torch.save(checkpoint, 'model.ckpt')
-
-
-checkpoint = torch.load('model.ckpt')
-model = MyModel()
+torch.save(checkpoint, 'model.ckpt')
+checkpoint = torch.load('model.ckpt') # load --> dict
 model.load_state_dict(checkpoint['model_state_dict'])
 optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 epoch = checkpoint['epoch']
