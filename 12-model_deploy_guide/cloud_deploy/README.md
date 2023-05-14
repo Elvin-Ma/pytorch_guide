@@ -43,3 +43,11 @@
 - 拉取
 *docker pull registry.cn-hangzhou.aliyuncs.com/<your_namespace>/<your_repository>:<tag>*
 
+# RAM 讲解
+RAM（Resource Access Management）是阿里云提供的一种访问控制服务，它允许用户创建和管理多个用户身份（即RAM用户），
+并对这些用户的访问权限进行细粒度的控制。
+RAM用户可以被视为与主账号（即阿里云账号）相对独立的子账号，它们可以拥有自己的登录密码和访问密钥，
+并且可以被授予访问阿里云各种资源的权限。
+因此，RAM用户常用于企业内部的权限管理和资源隔离，以及多人协作场景下的访问控制。
+
+# 

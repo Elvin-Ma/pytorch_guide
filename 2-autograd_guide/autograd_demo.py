@@ -77,7 +77,7 @@ def hook_demo():
     print("v grad: ", v.grad)
     
 def get_inter_grad():
-    # z_grad = []
+    z_grad = []
     # def get_grad(grad):
     #     z_grad.append(grad)
         

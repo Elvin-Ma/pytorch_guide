@@ -1,6 +1,23 @@
+# mudule模块使用指导 ：
+[源码地址](https://github.com/pytorch/pytorch/tree/270111b7b611d174967ed204776985cefca9c144/torch/nn)
+
+**nn.Module: 最核心**
+[nn.Module地址](https://github.com/pytorch/pytorch/blob/270111b7b611d174967ed204776985cefca9c144/torch/nn/modules/module.py)
+**基于nn.Module torch 实现了很多现有的模块**
+[torch.nn官方地址](https://pytorch.org/docs/stable/nn.html)
+**上述每一个nn（conv2d Linear）我们都可以认为是pytorch帮我们封装好的算子(初始化后可直接运行)
+
+- nn.Moule 类是 所有神经网络（neural network）的基类
+- torch.nn 里的大部分 nn 都需要继承它
+
+# module 作用
+- 帮助我们搭建神经网络
+- 那个是weight 那个是activation
+- 模型的保存和加载需要它
+- 权重初始化需要它
+
 # torch.nn
 [torch.nn官方地址](https://pytorch.org/docs/stable/nn.html)
-
 - 通过继承 nn.module 来定义我们的神经网络；
 - 在 __init__ 中初始化 neral network;
 - 在 forward 方法中 指定具体的计算流程.
@@ -31,6 +48,76 @@ class NeuralNetwork(nn.Module):
         return logits
 ```
 
+# 需要注意的几点：
+- 必须继承nn.Module （因为要完成一些统一的操作）
+- __init__ 构造函数（初始化父类、定义一些网络层）<--> 算子定义
+- forward 函数：自定义网络前向图
+- pytorch自带的网络层：conv linear Relu 也都继承自nn.Module
+- torch.nn 代码地址：
+[torch.nn 代码地址](https://github.com/pytorch/pytorch/tree/main/torch/nn/modules)
+- 本地地址：
+*https://github.com/pytorch/pytorch/tree/main/torch/nn/modules*
+- nn.Module 可以是一种嵌套结构
+- self.training = True （默认）
+- nn.Module 两种模式：train() / eval() 验证集时使用
+
+# nn.Module 类总结
+**属性总结**
+- self.training = True
+- self._parameters: Dict[str, Optional[Parameter]] = OrderedDict()
+- self._modules: Dict[str, Optional['Module']] = OrderedDict()
+- self._backward_hooks: Dict[int, Callable] = OrderedDict()
+- self._forward_hooks: Dict[int, Callable] = OrderedDict()
+- self._forward_pre_hooks: Dict[int, Callable] = OrderedDict()
+- self._state_dict_hooks: Dict[int, Callable] = OrderedDict()
+- nn.Module 没有实现forward --> 继承它的类必须实现
+**forward: Callable[..., Any] = _forward_unimplemented**
+
+**方法总结**
+- requires_grad_ ： 设置 所有的parameters 的requires_grad 属性；
+- zero_grad : p.grad.zero_() 把 所有 parameters的梯度设置成0；
+- train ： 遍历所有子模块的 module，设置其 self.training
+- eval： train(False) : model.eval() == model.train(False)
+- children 和 named_children:  遍历 self._modules(nn.Module) 并返回所有模块
+- parameters 和 named_parameters : 遍历module的 parameter的效果，
+- state_dict: 获取module的所有 parameters --> {para_name: para_date}
+- load_state_dict：加载 {para_name: para_date}；
+- register_forward_hook：前向传播钩子注册函数
+- register_forward_pre_hook：计算前钩子函数注册
+- register_backward_hook
+- to：完成整个模型的数据类型 或 device的转化
+- cpu：
+- cuda：
+- get_parameter
+- get_submodule
+- add_module
+- register_parameter
+- add_module
+- get_submodule
+- apply：将函数递归应用到 每个module
+- parameters: 返回parameters的迭代器
+
+# Parameter(torch.Tensor)
+- torch.Tensor 的子类
+- 作为Module的参数而存在
+- 对参数进行操作（weight 或bias）
+- 通过这个Parameter我们就可以把 参数 和act
+- requires_grad 默认都是 true
+
+# linear 案例分析
+- super(Linear, self).__init__() 完成Module的初始化工作
+- 矩阵相乘[m,k]*[k,n] = [m,n]
+- self.in_features = k
+- self.out_features = n
+- self.weight = Parameter (权重是以Parameter的形式存在的)
+- 完成了一个权重初始化的工作
+- forward：直接调用funciton里的函数
+*site-packages/torch/nn/functional.py*
+
+# function 和 module 的区别
+- module 里 最终调用的是 function（forward）；
+- __init__ 是 module的 存储的地方。
+
 # move neural network to device
 ```python
 model = NeuralNetwork().to(device)
@@ -41,14 +128,11 @@ print(model) # 打印model
 **自动调用Module的forward 方法**
 ```python
 X = torch.rand(1, 28, 28, device=device)
-logits = model(X) # 不要直接调用forward
+logits = model(X) # 不要直接调用forward --> 首先要调用_call_impl
 pred_probab = nn.Softmax(dim=1)(logits)
 y_pred = pred_probab.argmax(1)
 print(f"Predicted class: {y_pred}")
 ```
-# Module 官方地址
-[Module 官方实现](https://github.com/pytorch/pytorch/blob/270111b7b611d174967ed204776985cefca9c144/torch/nn/modules/module.py#L866)
-
 # 内置的 module
 ```python
 input_image = torch.rand(3,28,28)
@@ -70,6 +154,16 @@ print(f"After ReLU: {hidden1}")
 [Sequential](https://pytorch.org/docs/stable/generated/torch.nn.Sequential.html)
 
 **code**
+# Sequential 将多个 module 组合成一个module
+- 实现一个块的串联功能；
+- append ： 往sequential里增加模块：add_module
+- [0]： 所有功能
+- len 功能
+- 注意：与 nn.ModuleList()的区别
+  1. nn.ModuleList()没有 forward方法；
+  2.不能直接用module()来run；
+  3.这能一个一个run
+
 ```python
 seq_modules = nn.Sequential(
     flatten,
@@ -96,74 +190,17 @@ for name, param in model.named_parameters():
 - 将梯度传播回网络的参数
 - 更新网络权重
 
-# one end-to-end example
-```python
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
+# 设计Module 总结及注意事项：
+- loss.backward() : 计算梯度 --> grad 保存在梯度里的；
+- optimizer : 操作的对象就是 module 里的 Parameters（tensor的子类）
+- optimizer.zero_grad() 和 module 的zero_grad都完成梯度清0；
+- step() 更新参数
+- 
 
-class Net(nn.Module):
-
-    def __init__(self):
-        super(Net, self).__init__()
-        # 1 input image channel, 6 output channels, 5x5 square convolution
-        # kernel
-        self.conv1 = nn.Conv2d(1, 6, 5)
-        self.conv2 = nn.Conv2d(6, 16, 5)
-        # an affine operation: y = Wx + b
-        self.fc1 = nn.Linear(16 * 5 * 5, 120)  # 5*5 from image dimension
-        self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, 10)
-
-    def forward(self, x):
-        # Max pooling over a (2, 2) window
-        x = F.max_pool2d(F.relu(self.conv1(x)), (2, 2))
-        # If the size is a square, you can specify with a single number
-        x = F.max_pool2d(F.relu(self.conv2(x)), 2)
-        x = torch.flatten(x, 1) # flatten all dimensions except the batch dimension
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
-        return x
-
-net = Net()
-print(net)
-
-params = list(net.parameters())
-print(len(params)) # 可学习的参数
-print(params[0].size())  # conv1's .weight
-
-input = torch.randn(1, 1, 32, 32)
-out = net(input)
-print(out)
-
-net.zero_grad() # why
-out.backward(torch.randn(1, 10))
-
-output = net(input)
-target = torch.randn(10)  # a dummy target, for example
-target = target.view(1, -1)  # make it the same shape as output
-criterion = nn.MSELoss()
-
-loss = criterion(output, target)
-print(loss)
-
-
-print(loss.grad_fn)  # MSELoss
-print(loss.grad_fn.next_functions[0][0])  # Linear
-print(loss.grad_fn.next_functions[0][0].next_functions[0][0])  # ReLU
-
-# 梯度是累计的
-net.zero_grad()  # zeroes the gradient buffers of all parameters
-
-print('conv1.bias.grad before backward')
-print(net.conv1.bias.grad)
-
-loss.backward()
-
-print('conv1.bias.grad after backward')
-print(net.conv1.bias.grad)
-```
+# 函数对比
+torch.conv2d()
+torch.nn.functional.conv2d() # 同 torch.conv2d, 底层调用的是同一个函数
+torch.nn.conv2d # module 最终调用的是F.conv2d
 
 # parameters 进阶
 - torch module的一个重要的行为是注册 parameters；
@@ -174,9 +211,7 @@ print(net.conv1.bias.grad)
 **parameters代码展示**
 ```python
 import torch
-
 class TinyModel(torch.nn.Module):
-
     def __init__(self):
         super(TinyModel, self).__init__()
 
@@ -184,22 +219,17 @@ class TinyModel(torch.nn.Module):
         self.activation = torch.nn.ReLU()
         self.linear2 = torch.nn.Linear(200, 10)
         self.softmax = torch.nn.Softmax()
-
     def forward(self, x):
         x = self.linear1(x)
         x = self.activation(x)
         x = self.linear2(x)
         x = self.softmax(x)
         return x
-
 tinymodel = TinyModel()
-
 print('The model:')
 print(tinymodel)
-
 print('\n\nJust one layer:')
 print(tinymodel.linear2)
-
 print('\n\nModel params:')
 for param in tinymodel.parameters():
     print(param)
@@ -207,9 +237,7 @@ for param in tinymodel.parameters():
 print('\n\nLayer params:')
 for param in tinymodel.linear2.parameters():
     print(param)
-
 ```
-
 # bias 初始化
 - bias 通常初始化较小
 - bias 不参与权重更新，不需进行特殊的初始化来避免梯度消失或梯度下降
@@ -265,7 +293,6 @@ loss.backward()
 # 移除反向传播钩子
 handle.remove()
 ```
-
 **_forward_pre_hooks 案例**
 ```python
 import torch
