@@ -127,7 +127,7 @@ def main():
         train_kwargs.update(cuda_kwargs)
         test_kwargs.update(cuda_kwargs)
 
-    # step 3: 数据逐步
+    # step 3: 数据准备
     transform=transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.1307,), (0.3081,))
