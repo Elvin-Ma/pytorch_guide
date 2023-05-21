@@ -1,27 +1,76 @@
-# 镜像与容器 介绍
-[docker guide page](https://dockerdocs.cn/get-started/index.html)
-[菜鸟教程](https://www.runoob.com/docker/docker-tutorial.html)
+# 镜像与容器 概念介绍
+**docker：管理镜像和容器**
+![docker](https://www.runoob.com/wp-content/uploads/2016/04/docker01.png)
+[docker 入门教程](https://www.runoob.com/docker/docker-tutorial.html)
 
+# 理解docker
+- 目的：给我们提供了一个完整的环境：（自带的小系统）
+- 镜像image: 一个小系统 的模板（class）；
+- 容器container：镜像的实例化 --> 我们就可以直接取用它了；
+- dockerfile: 用于创建镜像
+- docker：是一个软件，管理以上三项；
+- 镜像是可以保存的，就可以不用每次都run dockerfile了。
+
+# 一些重要网站
+[docker 官网](https://www.docker.com)
+[docker github](https://github.com/docker/docker-ce)
+[docker guide page](https://dockerdocs.cn/get-started/index.html)
+[dockerfile]https://www.runoob.com/docker/docker-dockerfile.html
+[docker 命令查询](https://docs.docker.com/engine/reference/commandline/docker/)
+[dockerfile 命令查询](https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact)
+
+#得到image的几种方法
+方法1：docker pull    # 拉取仓库的镜像
+方法2：docker commit  # 保持 container 的当前状态到image后，然后生成对应的 image
+方法3：docker build   # 使用dockerfile 文件自动化制作 image
+
+# 常用的doker 指令
+- docker 显示docker 的command 
+- docker command --help # 查询每条指令的用法
+- docker pull <image_name> # 直接拉取镜像
+- docker images / docker image list # 查看镜像
+- docker search #查询有哪些镜像
+- docker run -it <镜像名> /bin/bash # 从镜像 启动一个容器
+- exit # 退出容器 --> 不是关闭
+- docker ps -a # 查看所有容器（包含已经关闭的容器）
+- docker ps  # 查看已经启动的容器
+- docker stop <container_id/name>
+- docker start <container_id/name> --> 并不意味着你连上它了
+- docker exec -it <container_id/name> bash # 重新连接上了docker
+- docker rm <container_id/name> # 删除容器：一定是在容器stop 时候删除
+- docker rmi <image_id/name> # 删除镜像
+- docker commit <container_id/name> <image_name:tag> # 把一个容器重新存为镜像
+- docker push <image_name> # 推送镜像到hub中
+- docker login 登录hub
+- docker tag # 重新打标签
+
+# 用 container 部署
+1. 裸服务器部署
+docker run -d -P training/webapp python app.py
+**服务器裸部署：直接run 这一行代码 就启动了一个服务**
+
+**jenkins自动化部署**
+# 管理一个 github（有我们的代码和dockerfile构建工具）
+# 自动的拉取我们的代码，利用dockerfile 在服务器上完成环境的搭建，
+# dockerfile里 最后会有一个CMD ["python", "app.py"]
 
 # 常用dockerfile 指令
-- RUN 指令用于在镜像构建期间执行命令，并生成一个新的镜像层。
-例如，可以使用 RUN 指令安装软件包、更新系统、配置环境变量等操作。
-每个 RUN 指令都会在当前镜像的基础上创建一个新的镜像层，并在其中执行指定的命令。
-- CMD 指令用于在容器启动时执行命令。每个 Dockerfile 只能包含一个 CMD 指令，如果在 Dockerfile 中定义了多个 CMD 指令，则只有最后一个 CMD 指令会生效。
-当使用 docker run 命令启动容器时，可以覆盖 CMD 指令中的命令。
-
-# 常用docker指令
-- -d： 如果容器中的命令执行完毕后，容器就会自动停止并退出。如果需要在容器中执行长时间运行的命令或服务，可以使用 -d 参数将容器作为后台进程运行
-- -t：生成终端
-- -i 交互式模式
-- -c：运行文本
-- --name：指定容器的名字
-- example：docker run -v /data:/app/data -v /config:/app/config -p 8080:80 -p 8081:8081 image-name
-- 如果只指定 一个-p 则 主机的 IP 地址和 50 端口访问容器内的服务了：
-- 由于PAI-EAS引擎监听固定的8080/9090端口，因此容器端口需要避开8080/9090端口。
-- 上述端口号要和 app.py 中的端口号一致；
-- Web 服务器，通常需要公开 HTTP 端口（例如 80 或 8080）或 HTTPS 端口（例如 443 或 8443）。
-- HTTP 服务的默认端口号为 80，HTTPS 服务的默认端口号为 443，SSH 服务的默认端口号为 22   
+- RUN	构建镜像时运行的指定命令
+- CMD	运行容器时默认执行的命令，如果有多个CMD质量，最后一个生效。
+*当使用 docker run 命令启动容器时，可以覆盖 CMD 指令中的命令。*
+- FROM	指明当前的镜像基于哪个镜像构建
+- LABEL	标记镜像信息，添加元数据
+- ARG	定义构建镜像过程中使用的变量
+- ENV	指定环境变量
+- VOLUME	创建一个数据卷挂载点
+- USER	指定运行容器时的用户名或 UID
+- WORKDIR	配置工作目录
+- EXPOSE	容器运行时的端口，默认是TCP
+- ADD	从本地或URL添加文件或压缩包到镜像中，并自动解压
+- COPY	拷贝文件或目录到镜像中
+- ONBUILD 创建子镜像时指定自动执行的操作指令
+- SHELL	指定默认 shell 类型
+- ENTRYPOINT	指定镜像的默认入口命令
 
 # 使用dockerfile构建镜像
 ```dockerfile
@@ -41,16 +90,4 @@ EXPOSE 5000
 # 启动应用程序
 CMD ["python", "app.py"]
 ```
-
-# 源更新
-cat /etc/apt/sources.list
-
-#centos 更新源：
-- yum install -y wget
-- mv -f /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
-- wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
-- mv /etc/yum.repos.d/epel.repo /etc/yum.repos.d/epel.repo.backup
-- wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
-- yum clean all
-- yum makecache
-- yum -y update
+**docker build . 从上述dockerfile中创建镜像**

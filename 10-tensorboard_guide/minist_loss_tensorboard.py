@@ -71,7 +71,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
 print(len(validation_loader))
-for epoch in range(1):  # loop over the dataset multiple times
+for epoch in range(10):  # loop over the dataset multiple times
     running_loss = 0.0
 
     for i, data in enumerate(training_loader, 0):
@@ -84,28 +84,28 @@ for epoch in range(1):  # loop over the dataset multiple times
         optimizer.step()
 
         running_loss += loss.item()
-        if i % 1000 == 999:    # Every 1000 mini-batches...
-            print('Batch {}'.format(i + 1))
-            # Check against the validation set
-            running_vloss = 0.0
+        # if i % 1000 == 999:    # Every 1000 mini-batches...
+        print('Batch {}'.format(i + 1))
+        # Check against the validation set
+        running_vloss = 0.0
 
-            net.train(False) # Don't need to track gradents for validation
-            for j, vdata in enumerate(validation_loader, 0):
-                vinputs, vlabels = vdata
-                voutputs = net(vinputs)
-                vloss = criterion(voutputs, vlabels)
-                running_vloss += vloss.item()
-            net.train(True) # Turn gradients back on for training
+        net.train(False) # Don't need to track gradents for validation
+        for j, vdata in enumerate(validation_loader, 0):
+            vinputs, vlabels = vdata
+            voutputs = net(vinputs)
+            vloss = criterion(voutputs, vlabels)
+            running_vloss += vloss.item()
+        net.train(True) # Turn gradients back on for training
 
-            avg_loss = running_loss / 1000
-            avg_vloss = running_vloss / len(validation_loader)
+        avg_loss = running_loss / 1000
+        avg_vloss = running_vloss / len(validation_loader)
 
-            # Log the running loss averaged per batch
-            writer.add_scalars('Training vs. Validation Loss',
-                            { 'Training' : avg_loss, 'Validation' : avg_vloss },
-                            epoch * len(training_loader) + i)
+        # Log the running loss averaged per batch
+        writer.add_scalars('Training vs. Validation Loss',
+                        { 'Training' : avg_loss, 'Validation' : avg_vloss },
+                        epoch * len(training_loader) + i)
 
-            running_loss = 0.0
+        running_loss = 0.0
 print('Finished Training')
 
 writer.flush()

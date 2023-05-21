@@ -87,6 +87,12 @@ def load_ckpt():
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
     epoch = checkpoint['epoch']
     loss = checkpoint['loss']
+    
+def save_trace_model():
+    model = Net()
+    traced_model = torch.jit.trace(model, torch.randn(1, 1, 28, 28))
+    traced_model.save("traced_model.pt")
+    # torch.save(traced_model, "mnist_trace.pt")
         
 if __name__ == "__main__":
     # save_demo_v1()
@@ -94,5 +100,6 @@ if __name__ == "__main__":
     # save_para_demo()
     # load_para_demo()
     # tensor_save()
-    load_to_gpu()
+    # load_to_gpu()
+    save_trace_model()
     print("run save_load_demo.py successfully !!!")

@@ -7,6 +7,14 @@ import numpy as np
 import torch.nn as nn
 import torch.optim as optim
 
+def add_scalar():
+  writer = SummaryWriter("scalar_log")
+  for n_iter in range(100,200):
+      writer.add_scalars('Loss/train', {"a":n_iter * 2, "b": n_iter*n_iter}, n_iter)
+      # writer.add_scalar('Loss/test1', n_iter + 3, n_iter)
+      # writer.add_scalar('Accuracy/train', np.random.random(), n_iter)
+      # writer.add_scalar('Accuracy/test', np.random.random(), n_iter)
+      
 def add_image():
   # Writer will output to ./runs/ directory by default
   # --logdir=./runs
@@ -16,22 +24,22 @@ def add_image():
   trainset = datasets.MNIST('mnist_train', train=True, download=True, transform=transform)
   trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True)
   model = torchvision.models.resnet50(False)
+  torch.onnx.export(model, torch.randn(64, 3, 224, 224), "resnet50_ttt.onnx")
   # Have ResNet model take in grayscale rather than RGB
   model.conv1 = torch.nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
-  images, labels = next(iter(trainloader))
-
+  images, labels = next(iter(trainloader)) # 拿到 输入 和label
+  
+  print("============images shape: ", images.shape)
+  output = model.conv1(images)
+  output = output[:, 0, :, :].reshape(64, 1, 14, 14).expand(64, 3, 14, 14)
+  print("============output shape: ", output.shape)
+  
+  
   grid = torchvision.utils.make_grid(images)
-  writer.add_image('images', grid, 0)
-  writer.add_graph(model, images)
+  grid = torchvision.utils.make_grid(output)
+  writer.add_image('output', grid, 0) # 保存图片
+  # writer.add_graph(model, images) # 保存模型
   writer.close()
-
-def add_scalar():
-  writer = SummaryWriter("scalar_log")
-  for n_iter in range(100):
-      writer.add_scalars('Loss/train', {"a":np.random.random(), "b":np.random.random()}, n_iter)
-      # writer.add_scalar('Loss/test', np.random.random(), n_iter)
-      # writer.add_scalar('Accuracy/train', np.random.random(), n_iter)
-      # writer.add_scalar('Accuracy/test', np.random.random(), n_iter)
 
 # helper function
 def select_n_random(data, labels, n=100):
@@ -77,8 +85,8 @@ def add_embedding():
   writer.close()
 
 if __name__ == "__main__":
-  # net_loss()
-  # add_image()
   # add_scalar()
-  add_embedding()
+  add_image()
+  # net_loss()
+  # add_embedding()
   print("run hello_tensorboard.py successfully !!!")

@@ -61,6 +61,8 @@ step5. [状态码说明](https://help.aliyun.com/document_detail/449809.html?spm
 
 # 挂载
 **挂载都是将云存储服务挂载到服务器上，以便在服务器上像使用本地磁盘一样访问云存储中的数据。**
+[oss 挂载](https://help.aliyun.com/document_detail/153892.html?spm=a2c4g.11186623.6.750.2b03142bM5YPG3)
+[网页版教程](https://www.qycn.com/about/hd/5658.html)
 
 ##OSS挂载
 - OSS（Object Storage Service）是阿里云提供的对象存储服务。
@@ -81,85 +83,26 @@ step5. [状态码说明](https://help.aliyun.com/document_detail/449809.html?spm
 **使用Python开发自定义Processor**
 [python Processor doc](https://help.aliyun.com/document_detail/130248.html?spm=a2c4g.69223.0.i1)
 
-- 登录
-*docker login --username=天才孤星000 registry.cn-shanghai.aliyuncs.com*
-- 查看
-*docker search registry.cn-hangzhou.aliyuncs.com/<your_namespace>/<your_repository>*
-*docker search registry.cn-hangzhou.aliyuncs.com/tensorflow/tensorflow*
-- 拉取
-*docker pull registry.cn-hangzhou.aliyuncs.com/<your_namespace>/<your_repository>:<tag>*
+#aliyun docker 管理
+1. 登录：docker login --username=*** registry.cn-shanghai.aliyuncs.com*
+2. 查看：docker search registry.cn-hangzhou.aliyuncs.com/<your_namespace>/<your_repository>*
+        *docker search registry.cn-hangzhou.aliyuncs.com/tensorflow/tensorflow*
+3. 拉取：docker pull registry.cn-hangzhou.aliyuncs.com/<your_namespace>/<your_repository>:<tag>
+4. 推送：docker push <image_tag>
 
-# RAM 讲解
-RAM（Resource Access Management）是阿里云提供的一种访问控制服务，它允许用户创建和管理多个用户身份（即RAM用户），
-并对这些用户的访问权限进行细粒度的控制。
-RAM用户可以被视为与主账号（即阿里云账号）相对独立的子账号，它们可以拥有自己的登录密码和访问密钥，
-并且可以被授予访问阿里云各种资源的权限。
-因此，RAM用户常用于企业内部的权限管理和资源隔离，以及多人协作场景下的访问控制。
+# RAM 是什么？？？
+- RAM（Resource Access Management）是阿里云提供的一种访问控制服务；
+- 它允许用户创建和管理多个用户身份（即RAM用户），并对这些用户的访问权限进行细粒度的控制；
+- RAM用户可以被视为与主账号（即阿里云账号）相对独立的子账号；
+- 它们可以拥有自己的登录密码和访问密钥，并且可以被授予访问阿里云各种资源的权限；
+- RAM用户常用于企业内部的权限管理和资源隔离，以及多人协作场景下的访问控制。
 
-**图像数据传入**：
-```python
-from PIL import Image
-
-data = 0
-with open('image.jpg', 'rb') as f:
-    data = f.read()
-
-image = Image.open(BytesIO(data))
-image = image.rotate(90)
-```
-**文字传入**
-```python
-a = bytes("wmfdsafds", encoder='utf-8')
-b = str(a, encodr='utf-8')
-
-#json format
-json_result = json.dump({}, ensure_ascii=False)
-return json_result
-```
-
-这将使用 Pillow 库打开图片字节流，并将其旋转 90 度。
-```
-这将打开名为 `image.jpg` 的图片文件，并将其读取为字节流，存储在变量 `data` 中。
-
-
-# 公网默认，rpc 局域网内
-# 测试：
+# 部署调试的三种方式测试：
 ![调用方式概览](https://help-static-aliyun-doc.aliyuncs.com/assets/img/zh-CN/6176768661/p521148.png)
-[python sdk](https://help.aliyun.com/document_detail/250807.html?spm=a2c4g.30347.0.0.51844a41SA02Jt)
-[http 测试](https://help.aliyun.com/document_detail/111114.html?spm=a2c4g.250807.0.0.73d746dcImPYL9)
-[线上调试]()
+1. python 调用调试： [python sdk](https://help.aliyun.com/document_detail/250807.html?spm=a2c4g.30347.0.0.51844a41SA02Jt)
+2. http测试调试：[http 测试](https://help.aliyun.com/document_detail/111114.html?spm=a2c4g.250807.0.0.73d746dcImPYL9)
+3. 阿里云控制板：在线调试窗口
 
-
-# 图片传入
-```python
-import requests
-import base64
-import json
-resp = requests.get('http://exmaplebucket.oss-cn-zhangjiakou.aliyuncs.com/images/000000123213.jpg')
-ENCODING = 'utf-8'
-datas = json.dumps( {
-            "image": base64.b64encode(resp.content).decode(ENCODING)
-            })
-head = {
-   "Authorization": "NTFmNDJlM2E4OTRjMzc3OWY0NzI3MTg5MzZmNGQ5Yj***"
-}
-for x in range(0,10):
-    resp = requests.post("http://150231884461***.cn-hangzhou.pai-eas.aliyuncs.com/api/predict/test_easycv_classification_example", data=datas, headers=head)
-    print(resp.text)
-```
-# oss 文件操作及挂载
-[oss 挂载](https://help.aliyun.com/document_detail/153892.html?spm=a2c4g.11186623.6.750.2b03142bM5YPG3)
-[网页版教程](https://www.qycn.com/about/hd/5658.html)
-
-# 阿里云现有镜像地址
-[镜像地址汇总](https://pai.console.aliyun.com/?regionId=cn-shanghai&spm=5176.14066474.J_5834642020.4.64f3426a3cqUsw&workspaceId=318871#/studio/container-manage)
-
-
-# 原生软件包：
-allspark   0.8
-certifi    2019.11.28
-pip        19.3.1
-setuptools 42.0.2.post20191203
-wheel      0.33.6
-
-# 删除ENV
+# 访问方式：
+curl <http://address> -H <Authorization> -d 'input'
+curl http://1369908734298992.cn-shanghai.pai-eas.aliyuncs.com/api/predict/malaoshi_mmm -H 'Authorization: NjlhNjE5NzhmODkwZmZlYTU3NDVlOWFiZTkyZmM2NGM5ODNkZDMyZQ==' -d '1 200'

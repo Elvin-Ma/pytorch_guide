@@ -41,6 +41,10 @@ if __name__=="__main__":
     # Environment variables which need to be
     # set when using c10d's default "env"
     # initialization mode.
+    '''
+    在进行分布式训练时，需要进行进程间通信来实现数据的交换和同步。为了使不同进程能够相互通信，需要指定一个进程作为主节点，其他进程则连接到主节点。
+    os.environ["MASTER_ADDR"]和os.environ["MASTER_PORT"]就是用来指定主节点地址和端口的环境变量。
+    '''
     os.environ["MASTER_ADDR"] = "localhost"
     os.environ["MASTER_PORT"] = "29500"
     main()

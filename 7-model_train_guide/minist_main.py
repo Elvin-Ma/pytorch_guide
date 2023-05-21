@@ -6,6 +6,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
+from torch.utils.tensorboard import SummaryWriter
+
 
 # step4: 模型搭建
 class Net(nn.Module):
@@ -58,6 +60,8 @@ def train(args, model:nn.Module, device, train_loader, optimizer, epoch):
                 100. * batch_idx / len(train_loader), loss.item()))
             if args.dry_run:
                 break
+        writer = SummaryWriter('mnist_log')
+        writer.add_scalar("trainning loss", loss, batch_idx)
 
 
 def test(model, device, test_loader):
@@ -149,7 +153,7 @@ def main():
     
     scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
     
-    for epoch in range(1, args.epochs + 2):
+    for epoch in range(1, 2):
         train(args, model, device, train_loader, optimizer, epoch)
         test(model, device, test_loader)
         scheduler.step()

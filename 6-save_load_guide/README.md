@@ -4,6 +4,9 @@
 **一个模型通过torch.save(model, "model.pt")完整保存下来；**
 **把这个模型直接给第三方；**
 **第三方能直接运行这个模型吗？？？**
+## 答案：no##
+**这时候的模型是工作在eager mode 下的，模型的结构信息它没有保存下来，
+eager mode：forward中的一个个的算子，走一步看一步。**
 
 # 保存及加载整个模型
 ```python
@@ -43,30 +46,21 @@ import torchvision
 model = torchvision.models.resnet18()
 example_input = torch.rand(1, 3, 224, 224)
 traced_script_module = torch.jit.trace(model, example_input)
-
 traced_script_module.save("model.pt")
-
 loaded_script_module = torch.jit.load("model.pt")
 ```
-
 # onnx 格式保存
-
 ```python
 import torch
 import torchvision
 
 model = torchvision.models.resnet18()
 input_tensor = torch.randn(1, 3, 224, 224)
-
 torch.onnx.export(model, input_tensor, "model.onnx")
 ```
 
 # what is state_dict
 **reference: what_is_state_dict.py**
 
-# 保存参数和保存整个模型的区别
-因此，当保存整个模型时，PyTorch 会将模型的类定义、构造函数参数、层结构、参数、缓存和其他状态信息一并保存到文件中，
-以便在之后恢复整个模型。而当只保存模型的参数状态时，PyTorch 只会保存模型的参数、缓存和其他状态信息，
-而不包括模型的类定义、构造函数参数和层结构等其他信息。
 
 
