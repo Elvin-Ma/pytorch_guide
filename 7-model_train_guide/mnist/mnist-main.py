@@ -6,8 +6,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
-from torch.utils.tensorboard import SummaryWriter
-
+# from torch.utils.tensorboard import SummaryWriter
 
 # step4: 模型搭建
 class Net(nn.Module):
@@ -27,6 +26,41 @@ class Net(nn.Module):
         x = F.relu(x)
         x = F.max_pool2d(x, 2)
         x = self.dropout1(x)
+        x = torch.flatten(x, 1)
+        x = self.fc1(x)
+        x = F.relu(x)
+        x = self.dropout2(x)
+        x = self.fc2(x)
+        output = F.log_softmax(x, dim=1)
+        return output
+    
+class Net1(nn.Module):
+    def __init__(self):
+        super(Net1, self).__init__()
+        self.conv1 = nn.Conv2d(1, 64, 5, 1, 2)
+        self.bn1 = nn.BatchNorm2d(64)
+        self.conv2 = nn.Conv2d(64, 128, 3, 1, 1)
+        self.bn2 = nn.BatchNorm2d(128)
+        self.conv3 = nn.Conv2d(128, 256, 3, 2, 1)
+        self.bn3 = nn.BatchNorm2d(256)
+        self.dropout1 = nn.Dropout(0.5)
+        self.avg_pool = nn.AdaptiveAvgPool2d((1,1))
+        self.fc1 = nn.Linear(256, 128)
+        self.dropout2 = nn.Dropout(0.5)
+        self.fc2 = nn.Linear(128, 10)
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = F.relu(x)
+        x = self.conv2(x)
+        x = self.bn2(x)
+        x = F.relu(x)
+        x = self.conv3(x)
+        x = self.bn3(x)
+        x = F.relu(x)
+        x = self.dropout1(x)
+        x = self.avg_pool(x)
         x = torch.flatten(x, 1)
         x = self.fc1(x)
         x = F.relu(x)
@@ -60,8 +94,8 @@ def train(args, model:nn.Module, device, train_loader, optimizer, epoch):
                 100. * batch_idx / len(train_loader), loss.item()))
             if args.dry_run:
                 break
-        writer = SummaryWriter('mnist_log')
-        writer.add_scalar("trainning loss", loss, batch_idx)
+        # writer = SummaryWriter('mnist_log')
+        # writer.add_scalar("trainning loss", loss, batch_idx)
 
 
 def test(model, device, test_loader):
@@ -144,7 +178,7 @@ def main():
     test_loader = torch.utils.data.DataLoader(dataset2, **test_kwargs)
 
     # step 4: 模型搭建
-    model = Net().to(device)
+    model = Net1().to(device)
     
     # step 5: 优化器及学习率配置
     optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
@@ -153,7 +187,7 @@ def main():
     
     scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
     
-    for epoch in range(1, 2):
+    for epoch in range(1, 10):
         train(args, model, device, train_loader, optimizer, epoch)
         test(model, device, test_loader)
         scheduler.step()

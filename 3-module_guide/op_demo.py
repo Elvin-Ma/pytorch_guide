@@ -137,8 +137,71 @@ def batch_morm_demo():
   layer_norm_output = layer_norm(input)
 
 
+def conv_demo():
+  # With square kernels and equal stride
+  m = nn.Conv2d(16, 33, 3, stride=2, padding=1) # 初始化
+  # # non-square kernels and unequal stride and with padding
+  # m = nn.Conv2d(16, 33, (3, 5), stride=(2, 1), padding=(4, 2))
+  # # non-square kernels and unequal stride and with padding and dilation
+  # m = nn.Conv2d(16, 33, (3, 5), stride=(2, 1), padding=(4, 2), dilation=(3, 1))
+  input = torch.randn(20, 16, 50, 100)
+  output = m(input) # 真正的计算
+  print("output shape", output.shape)
+  
+def linear_demo():
+  m = nn.Linear(20, 30) # 初始化 [m,k]*[k,n] --> [m,n]
+  input = torch.randn(512, 20) # input 设定
+  output = m(input) # run
+  print(output.size()) # bias 有没有， weight呢？
+
+def  maxpool_demo():
+   m = nn.MaxPool2d(3, stride=2, padding=1)
+   # pool of non-square window
+  #  m = nn.MaxPool2d((3, 2), stride=(2, 1))
+   input = torch.randn(20, 16, 50, 32)
+   output = m(input)
+   print("output shape: ", output.shape)
+   
+def global_average_pool():
+  m = nn.AdaptiveAvgPool2d((2, 3))
+  input = torch.randn(1, 2048, 7, 7)
+  output = m(input)
+  print("output shape: ", output.shape)
+  
+def batch_norm_demo():
+  m = nn.BatchNorm2d(100) # 100 就表示我们的channel 维度
+  # Without Learnable Parameters
+  # m = nn.BatchNorm2d(100, affine=False)
+  input = torch.randn(20, 100, 35, 45)
+  output = m(input)
+  print("output shape: ", output.shape)
+  
+def rnncell_onnx_get():
+  rnn = nn.RNNCell(10, 20)
+  input = torch.randn(6, 3, 10)
+  hx = torch.randn(3, 20)
+  output = []
+  torch.onnx.export(rnn, input[0], "rnn_cell.onnx")
+  # for i in range(6):
+  #     hx = rnn(input[i], hx)
+  #     output.append(hx)
+   
+def rnn_onnx_get():
+  rnn = nn.RNN(10, 20, 2)
+  input = torch.randn(5, 3, 10)
+  h0 = torch.randn(2, 3, 20)
+  output, hn = rnn(input, h0)
+  torch.onnx.export(rnn, (input, h0), "rnn.onnx")
+  # model = onnx.shape_inference.infer_shapes(onnx_model)
+
 if __name__ == "__main__":
   # deform_conv2d_demo(*params[0])
   # transposed_conv_demo()
-  group_conv_demo()
+  # group_conv_demo()
+  # conv_demo()
+  # linear_demo()
+  # maxpool_demo()
+  # global_average_pool()
+  # batch_norm_demo()  
+  rnn_onnx_get()
   print("run op_demo.py successfully !!!")

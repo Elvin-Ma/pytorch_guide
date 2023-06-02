@@ -82,6 +82,8 @@ step5. [状态码说明](https://help.aliyun.com/document_detail/449809.html?spm
 [凭证官方获取步骤](https://help.aliyun.com/document_detail/142247.html)
 **使用Python开发自定义Processor**
 [python Processor doc](https://help.aliyun.com/document_detail/130248.html?spm=a2c4g.69223.0.i1)
+**管理自己的镜像**
+[阿里云自己的镜像](https://cr.console.aliyun.com/cn-shanghai/instance/repositories)
 
 #aliyun docker 管理
 1. 登录：docker login --username=*** registry.cn-shanghai.aliyuncs.com*
@@ -106,3 +108,6 @@ step5. [状态码说明](https://help.aliyun.com/document_detail/449809.html?spm
 # 访问方式：
 curl <http://address> -H <Authorization> -d 'input'
 curl http://1369908734298992.cn-shanghai.pai-eas.aliyuncs.com/api/predict/malaoshi_mmm -H 'Authorization: NjlhNjE5NzhmODkwZmZlYTU3NDVlOWFiZTkyZmM2NGM5ODNkZDMyZQ==' -d '1 200'
+
+# image-infer 访问
+curl http://1369908734298992.cn-shanghai.pai-eas.aliyuncs.com/api/predict/malaoshi_nnn -H 'Authorization: OTMzODUyNWYwYTE3YjU0ODRlYzEzNjQyNzUxYTYwMjdlYzQ1YWU1OQ==' -d 'cat.jpg 200'
