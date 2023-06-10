@@ -21,17 +21,19 @@ def autograd_demo():
     def aa(grad):
         grad_list.append(grad)
     
-    print("==========1: ", y)
-    import copy
-    for i in range(10):
+    # print("==========1: ", y)
+    for i in range(10000):
         # global y
-        y.requires_grad=True
-        y.register_hook(aa)
+        # y.requires_grad=True
+        # y.register_hook(aa)
+        y.retain_grad()
         z = torch.matmul(y, x) + b # linear layer    
         output = torch.sigmoid(z)
         label = torch.Tensor([0, 0, 1, 0, 0])
         loss = (output-label).var() # l2 loss
         loss.backward()
+        # a = y.grad
+        y = y - 0.1 * y.grad
         # a = y.grad
         # b = 0.1 * a
         # if i < 90:
@@ -39,17 +41,22 @@ def autograd_demo():
         # elif i >= 90:
         # print("==============: ", i)
         # print("pre: \n", y)
-        y1 = y.detach()
-        y = y1 - 0.2*grad_list[-1]
-        print("beh: \n", y)
+        # y1 = y.detach()
+        # y = y1 - 0.2*grad_list[-1]
+        # a = y.grad
+        # b = y.detach()
+        
+        # y.requires_grad = True
+        # y.requires_grad_(True)
+        # print("beh: \n", y)
         # print(y)
         # y.retain_grads = True
         # y.requires_grad = True
         
-        # print("loss: ", loss)
+        print("loss: ", loss)
         # torch.Tensor
         # print("x grad: ", x.grad)
-    print("==========2: ", y)
+    # print("==========2: ", y)
     
     # x = torch.ones(5)  # input tensor
     # y = torch.zeros(3)  # expected output
@@ -155,13 +162,30 @@ def custom_demo():
     print("output: ", input)
     print("output grad: ", input.grad)
     
+def outer(f):
+    def inner(*args, **kargs):
+        inner.co += 1
+        print("=======: ", inner.co)
+        return f(*args, **kargs)
+    print("========== aaa")
+    inner.co = 0
+    return inner
+
+@outer
+def f():
+    pass
+    
 if __name__ == "__main__":
     # reqiregrad_set()
-    autograd_demo()
+    # autograd_demo()
     # internal_grad_demo()
     # set_no_grad()
     # grad_sum()
     # hook_demo()
     # get_inter_grad()
     # custom_demo()
+    f()
+    f()
+    f()
+    print(f.co)
     print("run autograd_demo.py successfully !!!")

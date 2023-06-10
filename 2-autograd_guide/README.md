@@ -1,6 +1,9 @@
 # pytorch doc
 [pytorch doc](https://pytorch.org/docs/stable/index.html)
 
+# pytorch backward 原理图
+![auto grad](https://miro.medium.com/v2/resize:fit:640/format:webp/1*viCEZbSODfA8ZA4ECPwHxQ.png)
+
 # 自动微分机制(auto grad)
 - 求梯度
 - 需不需要我们自己来求 no 
