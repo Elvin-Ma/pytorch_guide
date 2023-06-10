@@ -1,5 +1,5 @@
 # pytorch 介绍
-![pytorch]()
+![pytorch](https://github.com/pytorch/pytorch/blob/main/docs/source/_static/img/pytorch-logo-dark.png)
 
 #安装
 [安装链接](https://pytorch.org/)
@@ -32,3 +32,31 @@
 8. cuda 要依赖于一个 driver()；
 
 [驱动选择](https://www.nvidia.cn/Download/index.aspx?lang=cn)
+
+# pytorch version
+- 2.0
+- 1.9.0 1.10 1.11 1.12 1.13 --> 2.0
+- 2023年
+- 加速 pip install pytorch -i 镜像地址
+
+# 安装其他版本
+[安装链接1](https://pytorch.org/get-started/previous-versions/)
+[安装链接2](https://download.pytorch.org/whl/torch/)
+
+# 常用的pytorch 模块
+- nn
+- utils
+- optim
+- autograd : 对用户不感知
+- distributed
+- profiler : 算子性能追踪
+- quantization: 量化模块
+- jit、onnx：模型保存相关；
+
+# 学习pytorch 相关模块
+1. [pytorch doc](https://pytorch.org/docs/stable/search.html?q=&check_keywords=yes&area=default#)
+2. .conda/envs/mmcv/lib/python3.8/site-packages/torch/
+3. torch/_C/_VariableFunctions.pyi : pyi c++ 程序的python 接口
+4. 其它 。。。
+
+# torchvision
