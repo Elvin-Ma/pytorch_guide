@@ -1,29 +1,34 @@
-# pytorch tutorial basic
-  0. install guide
-  1. tensor guide
-  2. autograd guide
-  3. model_build guide
-  4. data guide
-  5. transforms guide
-  6. save_load guide
-  7. model train guide
+# pytorch 介绍
+![pytorch]()
 
-# pytorch tutorial advanced
-  10. tensorboard guide
-  11. distribute guide
-  12. c++ train
-  13. model deploy guide
-    - flash
-    - docker
-    - cloud
-    - c++
+#安装
+[安装链接](https://pytorch.org/)
 
-# Train model by your self
-## three step
-  1. tutorial
-  2. example
-  3. well know website
+# 安装注意事项
+1. 选Stable(选择稳定版本)
+2. linux 和 windows；linux 工作时候；
+3. pckage：pip install，
+4. libtorch：它是pytorch的c++版本，c++ 部署的时候可能会用到；
+5. language: Python
+6. compute platform:
+  cuda: 在Nvidia 的卡上跑模型要用到；
+  cpu: 在cpu上跑模型；
+  rocm: amd 显卡对应的计算平台；
 
+# conda 环境管理
+1. (base) C:\Users\86183> ： base ： 我们现在在base 这个环境里；
+2. conda env list : 查看conda 环境；
+3. conda create -n python=3.9
+4. conda activate base
 
+# pytorch 的软件栈
+1. pytorch 软件本身；
+2. cpu 版本 直接安装，依赖比较少：pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+3. cuda：nvidia 开发的一个在 GPU 上进行编程的一种语言， 和 C语言很类似；*.cu
+4. cuda 最终要的作用就是加速，在GPU上进行加速；
+5. GPU 非常善于处理结构化的数据，深度学习中 这些计算 ： 矩阵运算 --> 特别适合我们GPU来处理；
+6. cuda --> nvcc 编译器；装好cuda 后 nvcc 自动安装；
+7. cuda 一定要有nvidia的卡支持，不一定所有的nvidia的卡都支持cuda；
+8. cuda 要依赖于一个 driver()；
 
-
+[驱动选择](https://www.nvidia.cn/Download/index.aspx?lang=cn)
