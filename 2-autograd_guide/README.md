@@ -8,7 +8,7 @@
 [autograd addr](https://towardsdatascience.com/pytorch-autograd-understanding-the-heart-of-pytorchs-magic-2686cd94ec95)
 
 <video src="https://youtu.be/MswxJw-8PvE" controls="controls" width="500" height="300">您的浏览器不支持播放该视频！</video>
-[![Watch the video](https://raw.github.com/GabLeRoux/WebMole/master/ressources/WebMole_Youtube_Video.png)](https://youtu.be/MswxJw-8PvE)
+[![Watch the video]](https://youtu.be/MswxJw-8PvE)
 # 自动微分机制(auto grad)
 - 求梯度
 - 需不需要我们自己来求 no 
