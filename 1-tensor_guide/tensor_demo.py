@@ -232,3 +232,4 @@ if __name__ == "__main__":
   # stride_demo()
   # reshape_vs_view()
   print("run tensor_demo.py successfully !!!")
+  

@@ -10,21 +10,62 @@ def reqiregrad_set():
 
 # 全连接层计算梯度 tiny
 def autograd_demo():
-    x = torch.ones(5)  # input tensor
-    y = torch.zeros(3)  # expected output
-    w = torch.randn(5, 3, requires_grad=True) # requires_grad
-    b = torch.randn(3, requires_grad=True)    
-    z = torch.matmul(x, w)+b # 全连接层
+    torch.manual_seed(0)
+    global y 
+    x = torch.ones(5, requires_grad=True)
+    y = torch.randn(5, 5, requires_grad=True)
+    b = torch.randn_like(x)
     
-    loss = torch.nn.functional.binary_cross_entropy_with_logits(z, y)
-    print(f"Gradient function for z = {z.grad_fn}")
-    print(f"Gradient function for loss = {loss.grad_fn}")
-    loss.backward() # 反向传播：求梯度
-    print(w.grad)
-    print(b.grad)
-    print(y.grad) # 
-    print(z.grad) # 中间结果不保存
-    print("z requires_grad: ", z.requires_grad) #
+    grad_list = []
+    
+    def aa(grad):
+        grad_list.append(grad)
+    
+    print("==========1: ", y)
+    import copy
+    for i in range(10):
+        # global y
+        y.requires_grad=True
+        y.register_hook(aa)
+        z = torch.matmul(y, x) + b # linear layer    
+        output = torch.sigmoid(z)
+        label = torch.Tensor([0, 0, 1, 0, 0])
+        loss = (output-label).var() # l2 loss
+        loss.backward()
+        # a = y.grad
+        # b = 0.1 * a
+        # if i < 90:
+        #    y = y - 0.1*grad_list[-1]
+        # elif i >= 90:
+        # print("==============: ", i)
+        # print("pre: \n", y)
+        y1 = y.detach()
+        y = y1 - 0.2*grad_list[-1]
+        print("beh: \n", y)
+        # print(y)
+        # y.retain_grads = True
+        # y.requires_grad = True
+        
+        # print("loss: ", loss)
+        # torch.Tensor
+        # print("x grad: ", x.grad)
+    print("==========2: ", y)
+    
+    # x = torch.ones(5)  # input tensor
+    # y = torch.zeros(3)  # expected output
+    # w = torch.randn(5, 3, requires_grad=True) # requires_grad
+    # b = torch.randn(3, requires_grad=True)    
+    # z = torch.matmul(x, w)+b # 全连接层
+    
+    # loss = torch.nn.functional.binary_cross_entropy_with_logits(z, y)
+    # print(f"Gradient function for z = {z.grad_fn}")
+    # print(f"Gradient function for loss = {loss.grad_fn}")
+    # loss.backward() # 反向传播：求梯度
+    # print(w.grad)
+    # print(b.grad)
+    # print(y.grad) # 
+    # print(z.grad) # 中间结果不保存
+    # print("z requires_grad: ", z.requires_grad) #
     
 def internal_grad_demo():
     x = torch.ones(5)  # input tensor
@@ -116,11 +157,11 @@ def custom_demo():
     
 if __name__ == "__main__":
     # reqiregrad_set()
-    # autograd_demo()
+    autograd_demo()
     # internal_grad_demo()
     # set_no_grad()
     # grad_sum()
     # hook_demo()
     # get_inter_grad()
-    custom_demo()
+    # custom_demo()
     print("run autograd_demo.py successfully !!!")
