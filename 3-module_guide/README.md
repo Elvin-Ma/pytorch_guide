@@ -1,7 +1,29 @@
-# mudule模块使用指导 ：
+# mudule模块官方地址 ：
 [源码地址](https://github.com/pytorch/pytorch/tree/270111b7b611d174967ed204776985cefca9c144/torch/nn)
+[doc 地址](https://pytorch.org/docs/stable/nn.html)
+**上节课的autograd 我们是基于 function 来实现的**
+**layer层(operator)：神经网络中的层，是在module 下面的.**
+** pytorch 自带的模块大概23类左右: 都继承自nn.Module**
+- conv.py
+- linear.py
+- rnn.py
+- transformer.py
+- dropout.py
+- activition.py
+- loss.py 
+- ...
 
-**nn.Module: 最核心**
+# torch.nn.Module
+- class Module: 所有这些模块的父类；
+- class Module 完成了我们深度学习中的通用行为；
+- 
+
+# 写一个自己的model 注意哪几项：
+- 继承自nn.Module
+- __init__ 函数：实例化一些标准的layer，初始化父类（super(FullConnect，self).__init__())
+- forward: 我们具体的实现过程，计算过程
+- weight (Parameter)： activation(Tensor)
+
 [nn.Module地址](https://github.com/pytorch/pytorch/blob/270111b7b611d174967ed204776985cefca9c144/torch/nn/modules/module.py)
 **基于nn.Module torch 实现了很多现有的模块**
 [torch.nn官方地址](https://pytorch.org/docs/stable/nn.html)

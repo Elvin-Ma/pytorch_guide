@@ -11,9 +11,8 @@ def reqiregrad_set():
 # 全连接层计算梯度 tiny
 def autograd_demo_v1():
     torch.manual_seed(0)
-    global y 
-    x = torch.ones(5, requires_grad=True)
-    y = torch.randn(5, 5, requires_grad=True) # 叶子节点
+    x = torch.ones(5, requires_grad=True) # input
+    w = torch.randn(5, 5, requires_grad=True) # weight
     b = torch.randn_like(x)
     
     grad_list = []
@@ -22,23 +21,22 @@ def autograd_demo_v1():
         grad_list.append(grad)
 
     for i in range(100):
-        y.requires_grad=True
-        y.register_hook(hook)
+        # w.requires_grad=True # True 
+        w.register_hook(hook)
 
-        z = torch.matmul(y, x) + b # linear layer    
+        z = torch.matmul(w, x) + b # linear layer    
         output = torch.sigmoid(z)
         label = torch.Tensor([0, 0, 1, 0, 0])
         loss = (output-label).var() # l2 loss
         loss.backward()
         
-        # y = y - 0.2 * grad_list[-1] why wrong
-        y1 = y.detach()
-        y = y1 - 0.2*grad_list[-1]        
+        w = w - 0.2 * grad_list[-1] #why wrong? --> 我们不能改变非叶子节点的requires_grad
+        # w1 = w.detach() # detach 
+        # w = w1 - 0.2*grad_list[-1] # w 新建的tensor    
         print("loss: ", loss)
 
 def autograd_demo_v2():
     torch.manual_seed(0)
-    global y 
     x = torch.ones(5, requires_grad=True)
     y = torch.randn(5, 5, requires_grad=True) # 叶子节点
     b = torch.randn_like(x)
@@ -46,15 +44,13 @@ def autograd_demo_v2():
     for i in range(100):
         # y.grad.zero_()
         y.retain_grad()
+        # print("===========y.grad: ", y.grad)
         z = torch.matmul(y, x) + b # linear layer    
         output = torch.sigmoid(z)
         label = torch.Tensor([0, 0, 1, 0, 0])
         loss = (output-label).var() # l2 loss
         loss.backward()
-        print("===========: ", y.grad)
-        # y = y - 0.2 * y.grad
-        y.sub_(0.01*y.grad)
-        print("===========: ", y.grad)
+        y = y - 0.2 * y.grad # y 新的y --> 已经完成了梯度清0；
         print("loss: ", loss)
         
 # 全连接层计算梯度 tiny
@@ -65,16 +61,19 @@ def autograd_demo_v3():
     b = torch.randn_like(x)
 
     for i in range(100):
-        if i > 1:
+        if i > 0:
             y.grad.zero_()
-
+        # print("==========y.grad: ", y.grad)
         z = torch.matmul(y, x) + b # linear layer    
         output = torch.sigmoid(z)
         label = torch.Tensor([0, 0, 1, 0, 0])
         loss = (output-label).var() # l2 loss
         loss.backward()
         
-        with torch.no_grad():
+        # tensor a : requires_grad,  --> a.sub_(b): 对它的数据进行了更新；
+        # pytorch check： 对我们需要更新梯度的tensor 禁止用 replace操作；
+        # torch.no_grad(): 忽略这些警告，运行 replace 操作；
+        with torch.no_grad(): # replace 
             y.sub_(0.2 * y.grad)
     
         print("loss: ", loss)
@@ -147,26 +146,27 @@ def get_inter_grad():
     loss.backward(retain_graph=True) # 反向传播：求梯度
     print("output grad: ", output.grad)   
     
-class Exp(torch.autograd.Function):
+# 自定义方向函数
+class Exp(torch.autograd.Function): #继承这个 function
     @staticmethod
-    def forward(ctx, i):
+    def forward(ctx, i): # context
+        print("===========exp forward")
         result = i.exp()
         ctx.save_for_backward(result)
         return result
 
     @staticmethod
-    def backward(ctx, grad_output):
-        print("==============")
+    def backward(ctx, grad_output): # 自定义的方向传播函数
+        print("============== exp backward")
         result, = ctx.saved_tensors
         return grad_output * result
     
 def custom_demo():
-    input = torch.randn(5, 6)
-    input.requires_grad=True
-    output = Exp.apply(input)
-    output.backward(torch.rand(5, 6))
-    print("output: ", input)
-    print("output grad: ", input.grad)
+    input = torch.randn(5, 6, requires_grad=True)
+    output = Exp.apply(input) # output shape : (5, 6)
+    output.backward(torch.rand(5, 6)) # 
+    # print("output: ", input)
+    # print("output grad: ", input.grad)
     
 def outer(f):
     def inner(*args, **kargs):
@@ -179,11 +179,11 @@ def outer(f):
     
 if __name__ == "__main__":
     # reqiregrad_set()
-    autograd_demo_v1()
+    # autograd_demo_v2()
     # internal_grad_demo()
     # set_no_grad()
     # grad_sum()
     # hook_demo()
     # get_inter_grad()
-    # custom_demo()
+    custom_demo()
     print("run autograd_demo.py successfully !!!")

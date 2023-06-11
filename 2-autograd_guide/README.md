@@ -103,7 +103,6 @@ print(w.grad)
 print(b.grad)
 ```
 
-
 # 反向求导原理
 - grad_fn(grad function): 反向传播用到的函数；
 - grad_fn 在正向的时候自动生成（requires_grad=True时)；
@@ -202,6 +201,14 @@ print(f"\nCall after zeroing gradients\n{inp.grad}")
  # Use it by calling the apply method:
  output = Exp.apply(input)
  ```
+ # auto grad 机制不足
+ - 用起来不方便，搭建模型也不方便；
+ - 哪些参数需要设置requires_grad？
+ - 保存模型：保存哪些东西？
+ - matmul：那一个是weight 哪一个是activation呢？ 
+ - weight 的初始化；
+ - 解决思路：nn
+
  # examples
  - /tutorials/beginner_source/examples_autograd/polynomial_custom_function.py
 

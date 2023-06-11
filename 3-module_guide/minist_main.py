@@ -32,16 +32,40 @@ class Net(nn.Module):
         output = F.log_softmax(x, dim=1)
         return output
 
+class Net2(nn.Module):
+    def __init__(self):
+        super(Net2, self).__init__()
+        # self.bn0 = nn.BatchNorm2d(1)
+        self.conv1 = nn.Conv2d(1, 64, 5, 1, 2)
+        self.relu1 = nn.SELU()
+        self.bn1 = nn.BatchNorm2d(64)
+        self.conv2 = nn.Conv2d(64, 128, 3, 2)
+        self.bn2 = nn.BatchNorm2d(128)
+        self.fc1 = nn.Linear(21632, 128)
+        self.fc2 = nn.Linear(128, 10)
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu1(x)
+        x = self.conv2(x)
+        x = self.bn2(x)
+        x = self.relu1(x)
+        x = torch.flatten(x, 1)
+        x = self.fc1(x)
+        x = F.relu(x)
+        x = self.fc2(x)
+        output = F.log_softmax(x, dim=1)
+        return output
 
-def train(args, model, device, train_loader, optimizer, epoch):
-    model.train()
-    for batch_idx, (data, target) in enumerate(train_loader):
-        data, target = data.to(device), target.to(device)
-        optimizer.zero_grad()
-        output = model(data)
-        loss = F.nll_loss(output, target)
-        loss.backward()
-        optimizer.step()
+def train(args, model, device, train_loader, optimizer: torch.optim.Optimizer, epoch):
+    model.train() # mode 模式改为 train 模式
+    for batch_idx, (data, target) in enumerate(train_loader): # 变量数据集
+        data, target = data.to(device), target.to(device) # input data -> device
+        optimizer.zero_grad() # 梯度清0
+        output = model(data) # 前向计算
+        loss = F.nll_loss(output, target) # loss
+        loss.backward() # 反向传播
+        optimizer.step() # 更新参数
         if batch_idx % args.log_interval == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
@@ -49,7 +73,7 @@ def train(args, model, device, train_loader, optimizer, epoch):
             if args.dry_run:
                 break
 
-
+# @torch.no_grad
 def test(model, device, test_loader):
     model.eval()
     test_loss = 0
@@ -115,6 +139,7 @@ def main():
         train_kwargs.update(cuda_kwargs)
         test_kwargs.update(cuda_kwargs)
 
+    # 数据准备
     transform=transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.1307,), (0.3081,))
@@ -126,14 +151,18 @@ def main():
     train_loader = torch.utils.data.DataLoader(dataset1,**train_kwargs)
     test_loader = torch.utils.data.DataLoader(dataset2, **test_kwargs)
 
-    model = Net().to(device)
+    # 模型准备
+    model = Net2().to(device) # device
+    
+    # 优化器
     optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
-
-    scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
+    scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma) # 
+    
+    # 变量 epoch 开始训练： 一个数据集 跑完一遍 叫一个 epoch
     for epoch in range(1, args.epochs + 1):
         train(args, model, device, train_loader, optimizer, epoch)
         test(model, device, test_loader)
-        scheduler.step()
+        scheduler.step() # 学习率更新 是按照 epoch 来进行的
         
     x = torch.rand(1, 1, 28, 28).to(device)
     torch.onnx.export(model, x, "minist.onnx")

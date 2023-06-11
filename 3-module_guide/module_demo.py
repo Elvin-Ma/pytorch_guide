@@ -167,13 +167,49 @@ def module_hook_demo():
     # print("model.data count: {}\n".format(len(model.data)))
     print("model.data_grad count: {}\n".format(len(model.data_grad)))
     print("output shape: ", output.shape)
-            
+     
+# model
+class FullConnect(nn.Module):
+    def __init__(self, k, n):
+        super(FullConnect, self).__init__() # 初始化父类
+        self.full_connect1 = nn.Linear(30, 20) 
+        self.full_connect2 = nn.Linear(20, 10)
+        self.activation1 = nn.ReLU()
+        self.activation2 = nn.Sigmoid()
+        
+    def forward(self, input):
+        x = self.full_connect1(input) # type(input) = Tensor
+        x = self.activation1(x)
+        x = self.full_connect2(x)
+        x = self.activation2(x)
+        
+        return x
+           
+def full_connect_demo():
+    model = FullConnect(30, 10) # model的实例化
+    input = torch.rand(4, 30) # 我们拿不到input的梯度
+    
+    loss_function = nn.CrossEntropyLoss()
+    lable = torch.Tensor([3, 4, 2, 4]).to(torch.int64)
+    optimizer = optim.SGD(model.parameters(), lr=0.5)
+    for i in  range(100):
+        model.train()
+        optimizer.zero_grad()      
+        output = model(input) # output: float
+        loss = loss_function(output, lable)
+        loss.backward()
+        # print("================model weight grad before update: ", model.full_connect1.weight[0])
+        optimizer.step()
+        print("=======loss: ", loss)
+        # print("================model weight grad before update: ", model.full_connect1.weight[0])
+ 
 if __name__ == "__main__":
     # run_network()
     # forward_demo()
     # sequential_demo()
     # model_end2end()
     # function_compare()
-    module_hook_demo()
+    # module_hook_demo()
+    full_connect_demo()
     
     print("run module_demo.py successfully !!!")
