@@ -10,12 +10,26 @@
 # backward introduce
 [autograd addr](https://towardsdatascience.com/pytorch-autograd-understanding-the-heart-of-pytorchs-magic-2686cd94ec95)
 
-[![Watch the video]](https://youtu.be/MswxJw-8PvE)
-# 自动微分机制(auto grad)
-- 求梯度
-- 需不需要我们自己来求 no 
-- auto grad 是pytorch非常强大的功能（动态图）
-- pytroch 动态图 和 tensorflow 静态图
+[![Watch the video](https://pytorch.org/assets/images/computational_graph_backward_pass.png)](https://youtu.be/MswxJw-8PvE)
+
+# 自动微分机制(auto grad) 重点：
+- pytorch中 正向forward 对我们用户是可见的，但是backward对我们用户是不可见的；
+- 一般情况下，每一个正向的函数，都对应一个反向的函数（grad_fn--> Tensor中）；
+- tensor：requires_grad = True 
+- tensor: grad --> tensor 中存储grad的地方；
+- tensor: grad_fn --> 存储我们反向函数的地方
+- tesnor: is_leaf --> 这个tensor 是不是 叶子节点；
+- net::all weight --> 都是leaf
+- 叶子节点的梯度会自动保存下来的（weight）；
+- 中间的 activation 的梯度会计算，但是不保留；
+- pytorch 动态图 vs tensorflow 静态图；
+- 我们不能改变一个非叶子节点的 requires_grad;
+- 非叶子（一个函数的output）节点它的 requires_grad 自动推导的；
+- 非叶子节点对应函数的inputs 中只要有一个 requires_grad = True, 那么这个非叶子节点的requires_grad = True;
+- torch.no_grad() 会使得里面的新的tensor requires_grad = False
+- inplace的操作，非常大的风险：覆盖了原来的值，导致反向传播时计算不准确；
+- 标量的梯度才能被隐式创建，隐式创建（.backward(1)）；
+- 一般情况下，.backward(gradient)是有输入的: ;
 
 #反向传播算法
 - pytorch ：正向（forward） 和 反向 （backward）
@@ -25,6 +39,41 @@
 - 为了计算这些梯度，PyTorch有一个内置的微分引擎，名为torch.autograd。
 - 它支持任何计算图的梯度自动计算。
 - 这个torch.autograd 对用户不可知
+
+# 如何保存中间Tensor的梯度
+```python
+with torch.no_grad():
+    v = y.view(5, 5)
+    v.sub_(y.grad * 0.1) 
+
+    # 底层的实现机制，sub_ 在c++ 层面上是经过多层的函数调用；
+    # sub_ 底层会有一个新tensor的创建过程的；
+    y.sub_(0.1 * y.grad) 
+```
+1. 使用retain_grad 保存中间tensor 的梯度
+** retain_grad**
+```python
+for i in range(100):
+    y.retain_grad()
+    z = torch.matmul(y, x) + b # linear layer    
+    output = torch.sigmoid(z)
+    label = torch.Tensor([0, 0, 1, 0, 0])
+    loss = (output-label).var() # l2 loss
+    loss.backward()
+    y = y - 0.1 * y.grad # y 中间计算过程 --> y 变为非叶子节点
+```
+2. grad_hook
+```python
+gard_list = []
+def aa(grad):
+    grad_list.append(grad)
+    # return 0.001*grad
+
+a = torch.Tensor([1, 2, 3])
+a.regiter_hook(aa)
+b = a.mul(c)
+b.backward()
+```
 
 # tensor 的梯度
 - requires_grad: 设置我们是否需要求这个tensor的梯度
