@@ -1,13 +1,15 @@
 # pytorch doc
 [pytorch doc](https://pytorch.org/docs/stable/index.html)
 
+# pytorch动态图展示
+![官网原理图](https://github.com/pytorch/pytorch/raw/main/docs/source/_static/img/dynamic_graph.gif)
+
 # pytorch backward 原理图
 ![auto grad](https://miro.medium.com/v2/resize:fit:640/format:webp/1*viCEZbSODfA8ZA4ECPwHxQ.png)
 
 # backward introduce
 [autograd addr](https://towardsdatascience.com/pytorch-autograd-understanding-the-heart-of-pytorchs-magic-2686cd94ec95)
 
-<video src="https://youtu.be/MswxJw-8PvE" controls="controls" width="500" height="300">您的浏览器不支持播放该视频！</video>
 [![Watch the video]](https://youtu.be/MswxJw-8PvE)
 # 自动微分机制(auto grad)
 - 求梯度
@@ -50,8 +52,6 @@ print(w.grad)
 print(b.grad)
 ```
 
-# autograd 原理
-![官网原理图](https://github.com/pytorch/pytorch/raw/main/docs/source/_static/img/dynamic_graph.gif)
 
 # 反向求导原理
 - grad_fn(grad function): 反向传播用到的函数；

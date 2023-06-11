@@ -177,15 +177,11 @@ def f():
     
 if __name__ == "__main__":
     # reqiregrad_set()
-    # autograd_demo()
+    autograd_demo()
     # internal_grad_demo()
     # set_no_grad()
     # grad_sum()
     # hook_demo()
     # get_inter_grad()
     # custom_demo()
-    f()
-    f()
-    f()
-    print(f.co)
     print("run autograd_demo.py successfully !!!")
