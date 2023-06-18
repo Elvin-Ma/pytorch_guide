@@ -9,9 +9,9 @@ import torch.optim as optim
 
 def add_scalar():
   writer = SummaryWriter("scalar_log")
-  for n_iter in range(100,200):
-      writer.add_scalars('Loss/train', {"a":n_iter * 2, "b": n_iter*n_iter}, n_iter)
-      # writer.add_scalar('Loss/test1', n_iter + 3, n_iter)
+  for n_iter in range(200, 300):
+      # writer.add_scalars('Loss/train', {"a":n_iter * 2, "b": n_iter*n_iter}, n_iter)
+      writer.add_scalar('Loss/test1', 200, n_iter)
       # writer.add_scalar('Accuracy/train', np.random.random(), n_iter)
       # writer.add_scalar('Accuracy/test', np.random.random(), n_iter)
       
@@ -83,10 +83,71 @@ def add_embedding():
                       label_img=images.unsqueeze(1))
   writer.flush()
   writer.close()
+  
+def add_graph():
+  import torchvision.models as models
+  net = models.resnet50(pretrained=False)
+  writer = SummaryWriter("graph_log")
+  writer.add_graph(net, torch.rand(16, 3, 224, 224))
+  writer.flush()
+  writer.close()
+  
+def add_images():
+  img_batch = np.zeros((16, 3, 100, 100))
+  for i in range(16):
+      img_batch[i, 0] = np.arange(0, 10000).reshape(100, 100) / 10000 / 16 * i
+      img_batch[i, 1] = (1 - np.arange(0, 10000).reshape(100, 100) / 10000) / 16 * i
+
+  writer = SummaryWriter("image_log")
+  writer.add_images('my_image_batch', img_batch, 0)
+  writer.flush()
+  writer.close()
+  
+def add_image():
+  import numpy as np
+  img = np.zeros((1, 100, 100))
+  img[0] = np.arange(0, 10000).reshape(100, 100) / 10000
+  # img[1] = 1 - np.arange(0, 10000).reshape(100, 100) / 10000
+
+  # img_HWC = np.zeros((100, 100, 3))
+  # img_HWC[:, :, 0] = np.arange(0, 10000).reshape(100, 100) / 10000
+  # img_HWC[:, :, 1] = 1 - np.arange(0, 10000).reshape(100, 100) / 10000
+
+  writer = SummaryWriter("image_log")
+  writer.add_image('my_image', img, 0)
+
+  # If you have non-default dimension setting, set the dataformats argument.
+  # writer.add_image('my_image_HWC', img_HWC, 0, dataformats='HWC')
+  writer.close()
+  
+  
+def add_embedding_v2():
+  import keyword
+  import torch
+  meta = []
+  while len(meta)<100:
+      meta = meta+keyword.kwlist # get some strings
+  meta = meta[:100]
+
+  for i, v in enumerate(meta):
+      meta[i] = v+str(i)
+
+  label_img = torch.rand(100, 3, 10, 32)
+  for i in range(100):
+      label_img[i]*=i/100.0
+
+  writer = SummaryWriter("emb_log")
+  # writer.add_embedding(torch.randn(100, 5), metadata=meta, label_img=label_img)
+  writer.add_embedding(torch.randn(100, 5), label_img=label_img)
+  # writer.add_embedding(torch.randn(100, 5), metadata=meta)
 
 if __name__ == "__main__":
   # add_scalar()
-  add_image()
+  # add_image()
   # net_loss()
   # add_embedding()
+  # add_graph()
+  # add_images()
+  # add_image()
+  add_embedding_v2()
   print("run hello_tensorboard.py successfully !!!")

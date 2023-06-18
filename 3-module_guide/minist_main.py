@@ -2,10 +2,11 @@ from __future__ import print_function
 import argparse
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+# import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
+import torch.nn.functional as F
 
 class Net(nn.Module):
     def __init__(self):
@@ -36,17 +37,23 @@ class Net2(nn.Module):
     def __init__(self):
         super(Net2, self).__init__()
         # self.bn0 = nn.BatchNorm2d(1)
-        self.conv1 = nn.Conv2d(1, 64, 5, 1, 2)
-        self.relu1 = nn.SELU()
+        self.conv1 = nn.Conv2d(1, 64, 5, 1, 2) # 子模块
+        self.relu1 = nn.SELU() # 直接用官方自己的module
         self.bn1 = nn.BatchNorm2d(64)
+        self.bn3 = nn.BatchNorm2d(64)
         self.conv2 = nn.Conv2d(64, 128, 3, 2)
         self.bn2 = nn.BatchNorm2d(128)
         self.fc1 = nn.Linear(21632, 128)
         self.fc2 = nn.Linear(128, 10)
+    
     def forward(self, x):
+        # self.conv3 = nn.Conv2d(1, 64, 5, 1, 2) # 万万不可以
+        # conv4 = nn.Conv2d(1, 64, 5, 1, 2)
         x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.relu1(x)
+        # x = self.conv5(x)
+        # x = self.bn1(x)
+        # x = self.relu1(x)
+        x = torch.selu(x) # 可以的
         x = self.conv2(x)
         x = self.bn2(x)
         x = self.relu1(x)
@@ -56,13 +63,21 @@ class Net2(nn.Module):
         x = self.fc2(x)
         output = F.log_softmax(x, dim=1)
         return output
+    
+class Net3(nn.Module):
+    def __init__(self):
+        super(Net3, self).__init__()
+        self.net = Net2()
+        
+    def forward(self, x):
+        return self.net(x)
 
-def train(args, model, device, train_loader, optimizer: torch.optim.Optimizer, epoch):
+def train(args, model: Net2, device, train_loader, optimizer: torch.optim.Optimizer, epoch):
     model.train() # mode 模式改为 train 模式
     for batch_idx, (data, target) in enumerate(train_loader): # 变量数据集
         data, target = data.to(device), target.to(device) # input data -> device
         optimizer.zero_grad() # 梯度清0
-        output = model(data) # 前向计算
+        output = model(data) # 前向计算 
         loss = F.nll_loss(output, target) # loss
         loss.backward() # 反向传播
         optimizer.step() # 更新参数
@@ -140,14 +155,20 @@ def main():
         test_kwargs.update(cuda_kwargs)
 
     # 数据准备
+    # 1. transform 数据类型
     transform=transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.1307,), (0.3081,))
-        ])
+        ]) # 转化--> 对数据进行前处理
+    
+    # 2. 数据下载以及处理： dataset1 属性类型是什么？
     dataset1 = datasets.MNIST('../data', train=True, download=True,
                        transform=transform)
     dataset2 = datasets.MNIST('../data', train=False,
                        transform=transform)
+    
+    # 3. train_loader 是什么数据类型
+    # pytorch的接口
     train_loader = torch.utils.data.DataLoader(dataset1,**train_kwargs)
     test_loader = torch.utils.data.DataLoader(dataset2, **test_kwargs)
 
@@ -170,5 +191,61 @@ def main():
     if args.save_model:
         torch.save(model, "mnist_cnn.pt")
 
+def parameters_demo():
+    a = Net3()
+    b = Net2()
+    c = list(b.named_parameters())
+    # c = list(b.named_children())
+    d = b._modules
+    dd = b._parameters
+    f = b.conv1._parameters
+    stat_dict = a.state_dict()
+    output = b(torch.randn(4, 1, 28, 28))
+    # print(stat_dict)
+        
+    # print(c)
+    # print("======================")
+    print(f)
+    print(stat_dict)
+    
+def function_demo():
+    tensor0 = torch.rand(4, 1, 28, 28)
+    a = torch.relu(tensor0) # 方式1 --> 最原始的方式
+
+    b = nn.ReLU()(tensor0) #方式2 -->在forward里调用我们的方式3
+    
+    c = F.relu(tensor0) # 方式3 --> 调用我们的方式1，也可能直接调用方式1
+    
+    # 说白了：torch里面函数啊，转来转去，底层就一份函数
+    
+    print(a.shape)
+    print(b.shape)
+    print(c.shape)
+
+def container_demo():
+    # model = nn.Sequential(
+    #               nn.Conv2d(1,20,5, padding=2),
+    #               nn.ReLU(),
+    #               nn.Conv2d(20,64,5, padding=2),
+    #               nn.ReLU()
+    #         )
+    x = torch.rand(4, 1, 112, 112)
+    # output = model(tensor)
+    
+    linears = nn.ModuleList([nn.Conv2d(1,20,5, padding=2),
+            nn.ReLU(),
+            nn.Conv2d(20,64,5, padding=2),
+            nn.ReLU()])
+    # output = linears(tensor)
+    for layer in linears:
+        x = layer(x)
+        
+    print("output shape: ", x.shape)  
+    
 if __name__ == '__main__':
-    main()
+    # main()
+    # parameters_demo()
+    # function_demo()
+    container_demo()
+    torch.Tensor()
+    print("run minist_main.py successfully !!!")

@@ -83,9 +83,9 @@ for epoch in range(10):  # loop over the dataset multiple times
         loss.backward()
         optimizer.step()
 
-        running_loss += loss.item()
-        # if i % 1000 == 999:    # Every 1000 mini-batches...
-        print('Batch {}'.format(i + 1))
+        running_loss = loss.item()
+        if i % 1000 == 999:    # Every 1000 mini-batches...
+          print('Batch {}'.format(i + 1))
         # Check against the validation set
         running_vloss = 0.0
 
@@ -94,15 +94,18 @@ for epoch in range(10):  # loop over the dataset multiple times
             vinputs, vlabels = vdata
             voutputs = net(vinputs)
             vloss = criterion(voutputs, vlabels)
-            running_vloss += vloss.item()
+            running_vloss = vloss.item()
+            
         net.train(True) # Turn gradients back on for training
 
-        avg_loss = running_loss / 1000
-        avg_vloss = running_vloss / len(validation_loader)
+        # avg_train_loss = running_loss / 1000
+        # avg_val_loss = running_vloss / len(validation_loader)
+        avg_train_loss = running_loss
+        avg_val_loss = running_vloss
 
         # Log the running loss averaged per batch
         writer.add_scalars('Training vs. Validation Loss',
-                        { 'Training' : avg_loss, 'Validation' : avg_vloss },
+                        { 'Training' : avg_train_loss, 'Validation' : avg_val_loss },
                         epoch * len(training_loader) + i)
 
         running_loss = 0.0

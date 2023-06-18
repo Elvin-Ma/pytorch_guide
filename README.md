@@ -24,6 +24,16 @@
   2. example
   3. well know website
 
-
-
+# 常用的pytorch 模块
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim  # adam sgd lr_scheduler
+import torch.utils.data as data # dataset dataloader
+import torch.optim.lr_scheduler import as lr_scheduler
+from torch.utils.tensorboard import SummaryWriter
+from torchvision import datasets, transforms
+improt torch.jit as jit
+```
 

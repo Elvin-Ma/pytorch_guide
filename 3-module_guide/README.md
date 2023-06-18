@@ -18,31 +18,37 @@
 - class Module 完成了我们深度学习中的通用行为；
 - 
 
-# 写一个自己的model 注意哪几项：
-- 继承自nn.Module
-- __init__ 函数：实例化一些标准的layer，初始化父类（super(FullConnect，self).__init__())
-- forward: 我们具体的实现过程，计算过程
-- weight (Parameter)： activation(Tensor)
+# 写一个自己的model 步骤：
+- 1. 继承自nn.Module
+- 2. __init__ 函数：实例化一些标准的layer，
+- 3. __inti__函数中必须初始化父类（super(FullConnect，self).__init__())
+- 4. forward: 我们具体的实现过程，计算过程
 
+# 自己 module 注意事项
+- __init__ 中写的self.conv/ self.relu ... --> 也是一个类；
+- Conv2d--> 同样继承自nn.Module
+- 官方已经帮我们实现了很多的网络层（layer）；
+- conv2d 的定义方式和定义我们自己网络的方式是一样的；
+- 递归的调用，方便我们搭建网络；
+- weight (Parameter)： activation(Tensor)
+- nn.Moule 类是 所有神经网络（neural network）的基类
+- torch.nn 里的大部分 nn 都需要继承它
+[torch.nn官方地址](https://pytorch.org/docs/stable/nn.html)
+- 通过继承 nn.module 来定义我们的神经网络；
+- 在 __init__ 中初始化 neral network;
+- 在 forward 方法中 指定具体的计算流程.
+
+# moudle参考文档：
 [nn.Module地址](https://github.com/pytorch/pytorch/blob/270111b7b611d174967ed204776985cefca9c144/torch/nn/modules/module.py)
 **基于nn.Module torch 实现了很多现有的模块**
 [torch.nn官方地址](https://pytorch.org/docs/stable/nn.html)
 **上述每一个nn（conv2d Linear）我们都可以认为是pytorch帮我们封装好的算子(初始化后可直接运行)
-
-- nn.Moule 类是 所有神经网络（neural network）的基类
-- torch.nn 里的大部分 nn 都需要继承它
 
 # module 作用
 - 帮助我们搭建神经网络
 - 那个是weight 那个是activation
 - 模型的保存和加载需要它
 - 权重初始化需要它
-
-# torch.nn
-[torch.nn官方地址](https://pytorch.org/docs/stable/nn.html)
-- 通过继承 nn.module 来定义我们的神经网络；
-- 在 __init__ 中初始化 neral network;
-- 在 forward 方法中 指定具体的计算流程.
 
 # code example
 ```python
@@ -84,18 +90,36 @@ class NeuralNetwork(nn.Module):
 - nn.Module 两种模式：train() / eval() 验证集时使用
 
 # nn.Module 类总结
-**属性总结**
-- self.training = True
-- self._parameters: Dict[str, Optional[Parameter]] = OrderedDict()
-- self._modules: Dict[str, Optional['Module']] = OrderedDict()
+- 路径：torch/nn/modules/module.py
+**nn.Module属性总结**
+- 1. self.training = True #  module : train() / eval()
+- 2. self._parameters: Dict[str, Optional[Parameter]] = OrderedDict() # 存储weight的地方
+- 3. self._modules --> 存储模块的地方
+- self._buffers
 - self._backward_hooks: Dict[int, Callable] = OrderedDict()
 - self._forward_hooks: Dict[int, Callable] = OrderedDict()
 - self._forward_pre_hooks: Dict[int, Callable] = OrderedDict()
 - self._state_dict_hooks: Dict[int, Callable] = OrderedDict()
-- nn.Module 没有实现forward --> 继承它的类必须实现
-**forward: Callable[..., Any] = _forward_unimplemented**
+- sefl._load_state_dict_pre_hooks --> 加载状态字典的时候的钩子函数
 
-**方法总结**
+**nn.Moudle方法总结**
+1. forward 的调用过程
+**forward: Callable[..., Any] = _forward_unimplemented**
+**__call__ = _call_impl --> net(Tensor)
+** forward_call = self.forward
+2. cuda、cpu
+**将模块搬迁到cuda（GPU）上；
+3. state_dict() # 保存模型的状态
+4. load_state_dict() # 加载module时的方法
+5. parameters() # 提取model的所有与 parameters
+6. named_parameters() # 调用_named_members, 另外 被 parameters调用
+7. chilren() --> 获取当前module的子moudule
+8. train() / eval() --> 设置所有的module 的mode；
+9. require_grad_() --> 统一设置所有parameters的requires_grad_;
+10. zero_grad() --> 所有parameters梯度置0；
+11. apply(fn) --> 遍历所有的模块，每个模块进操作（fn指定的操作）
+
+**其它注意事项**
 - requires_grad_ ： 设置 所有的parameters 的requires_grad 属性；
 - zero_grad : p.grad.zero_() 把 所有 parameters的梯度设置成0；
 - train ： 遍历所有子模块的 module，设置其 self.training
@@ -118,6 +142,7 @@ class NeuralNetwork(nn.Module):
 - get_submodule
 - apply：将函数递归应用到 每个module
 - parameters: 返回parameters的迭代器
+- buffers 中间 activation保存
 
 # Parameter(torch.Tensor)
 - torch.Tensor 的子类

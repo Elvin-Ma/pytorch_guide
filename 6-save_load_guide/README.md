@@ -20,13 +20,11 @@ torch.save(model.state_dict(), "mnist_para.pth")
 param = torch.load("mnist_para.pth")
 model.load_state_dict(param)
 ```
-# 注意
-- pt 和 pth 用谁都行
-- state_dict : 只保存模型权重
-- torch.save 和 torch.load 还可以保存 tensor 和 optimizer
 
 # 加载到GPU
+```python
 model = torch.load('mnist.pt', map_location=device)
+```
 
 # 保存和加载 ckpt
 ```python
@@ -37,6 +35,25 @@ optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 epoch = checkpoint['epoch']
 loss = checkpoint['loss']
 ```
+# 注意事项
+- pt 和 pth 、ckpt 用谁都行
+- state_dict : 只保存模型权重（parameters）和 buffer：tensor的信息
+- torch.save 和 torch.load 还可以保存 tensor、optimizer、 lr_schedule、 epoch 等
+- 使用state_dict 这种保存方式的话，加载的时候要用 load_state_dict 方法来加载；
+- 进一步，要使用load_state_dict 必须要实现建立一个对象；
+- torch.save 保存的是什么，torch.load 加载出来就是什么；
+- torch.save 保存模型--> 并没有保存具体的模型结构信息, 只是保存了模块和parameters/tensor等信息;
+- 可以直接load模型到我们的 cpu上,通过设置map_location 参数
+- 可以通过torch.jit 这种方式来保存成静态图模型（保存了模型的结构信息），重新加载不依赖与原来的图；
+
+# 静态图和动态图
+- tensorflow 刚开始是静态图 
+- pytorch 刚开始是动态图；
+- tensorflow到后来也支持了动态图；
+- pytorch也是支持静态图的；
+- 动态图不利于部署，尤其在边缘测部署，性能很差，优化手段有限；
+- 静态图：保存了完整的图的结构信息，可以有很多的优化手段：
+  eg：常量折叠、量化、裁剪、算子融合、缓存优化；
 
 # jit trace 保存
 ```python

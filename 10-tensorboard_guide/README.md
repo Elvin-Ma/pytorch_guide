@@ -1,4 +1,5 @@
 # tensorboard
+[torch 链接](https://pytorch.org/docs/stable/tensorboard.html?highlight=tensorboard)
 - board：展板
 - tensorflow 率先采用个
 - 效果很好，pytorch 也采用了这个 --> 
@@ -8,6 +9,10 @@
 # 安装方式
 - 我们安装好了 tensorflow 的话，tensorboard会自动安装；
 - pip install tensorboard
+
+#执行方式：
+tensorboard --logdir=./logsm
+python -m tensorboard.main --logdir=./logs
 
 # torch 中的tensorboard 
 - 作用： 用于 dump 文件

@@ -76,6 +76,12 @@ def script_demo():
     train(scripted_model, dataloader, optimizer, criterion, epochs=10)
     scripted_model.save("scripted_model.pt")
     
+def stat_dict_demo():
+    model = MyModel()
+    
+    aa = {"model_statdict":model.state_dict()}
+    torch.save(aa, "state_dict.ckpt")
+    
 def traced_demo():
     model = MyModel()
     scripted_model = torch.jit.trace(model, torch.randn(1, 10))
@@ -92,39 +98,54 @@ def traced_demo():
     print("traced model output: ", output_data)
     
 def onnx_demo():
-    # model = MyModel()
-    # torch.onnx.export(model, torch.randn(4, 10), "onnx_model.onnx")
-    
+    model = MyModel()
+    torch.onnx.export(model, torch.randn(4, 10), "onnx_model.onnx")
+       
+def onnx_infer():
     input = torch.randn(4,10)
     # 加载模型并运行
     import onnxruntime as ort
-    ort_session = ort.InferenceSession("onnx_model.onnx")
-    ort_inputs = {ort_session.get_inputs()[0].name: input.numpy()}
-    ort_outputs = ort_session.run(None, ort_inputs)
-    print("onnx run output: ", ort_outputs[0])
+    ort_session = ort.InferenceSession("onnx_model.onnx") # 加载模型到 session中
+    ort_inputs = {ort_session.get_inputs()[0].name: input.numpy()} # 设置我们input --> numpy 格式的数据
+    ort_outputs = ort_session.run(None, ort_inputs) # 开始run --> outputs --
+    print("onnx run output: ", ort_outputs[0]) # 取出结果
+    
         
-def dynamo_demo():
-    # 方式一：      
-    def train(model, dataloader):
-        model = torch.compile(model) # 是有开销的
-        for batch in dataloader:
-            run_epoch(model, batch)
+# def dynamo_demo():
+#     # 方式一：      
+#     def train(model, dataloader):
+#         model = torch.compile(model) # 是有开销的
+#         for batch in dataloader:
+#             run_epoch(model, batch)
 
-        def infer(model, input):
-            model = torch.compile(model)
-            return model(\*\*input)
+#         def infer(model, input):
+#             model = torch.compile(model)
+#             return model(\*\*input)
         
-    # 方式二：
-    @optimize('inductor')
-    def forward(self, imgs, labels, mode):
-        x = self.resnet(imgs)
-        if mode == 'loss':
-            return {'loss': F.cross_entropy(x, labels)}
-        elif mode == 'predict':
-            return x, labels
+#     # 方式二：
+#     @optimize('inductor')
+#     def forward(self, imgs, labels, mode):
+#         x = self.resnet(imgs)
+#         if mode == 'loss':
+#             return {'loss': F.cross_entropy(x, labels)}
+#         elif mode == 'predict':
+#             return x, labels
+
+def run_script_model():
+    model = torch.jit.load("scripted_model.pt")
+    output = model(torch.rand(4, 10))
+    print("output: ", output)
+    
+def eager_mode():
+    model = MyModel()
+    torch.save(model, "model.pt")
         
 if __name__ == "__main__":
     # script_demo()
     # traced_demo()
-    onnx_demo()
+    # onnx_demo()
+    # run_script_model()
+    # onnx_infer()
+    # eager_mode()
+    stat_dict_demo()
     print("run mode_demo.py successfully!!!")
