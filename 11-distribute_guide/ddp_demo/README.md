@@ -24,8 +24,8 @@
 ## 1.4 Ring AllReduce 原理
 - [Ring AllReduce 1](https://picture.iczhiku.com/weixin/message1570798743118.html)
 - [Ring AllReduce 2](https://andrew.gibiansky.com/blog/machine-learning/baidu-allreduce/#)
-- [scatter reduce](https://pic3.zhimg.com/v2-4590aeb5fd981b1e6f926cc68605884a_b.webp)
-- [all gather](https://pic4.zhimg.com/v2-c9df34575d7d95ec87d85575d25d6f37_b.webp)
+- ![scatter reduce](https://pic3.zhimg.com/v2-4590aeb5fd981b1e6f926cc68605884a_b.webp)
+- ![all gather](https://pic4.zhimg.com/v2-c9df34575d7d95ec87d85575d25d6f37_b.webp)
 
 # 2. 常用参数（ARGS）总结
 - node: 物理节点，可以是一台机器，也可以是一个容器，节点内部可以有多个GPU；
@@ -158,17 +158,17 @@ python -m torch.distributed.launch --nproc_per_node=8
 *是否支持 GPU，视安装的 MPI 版本而定*
 
 # 6. [references]
-[参考资料0](https://pytorch.org/docs/stable/notes/ddp.html)
-[参考资料1](https://pytorch.org/tutorials/intermediate/ddp_tutorial.html)
-[参考资料2](https://pytorch.org/tutorials/intermediate/dist_tuto.html)
-[参考资料3](https://pytorch.org/docs/master/nn.html#dataparallel-layers-multi-gpu-distributed)
-[参考资料4](https://pytorch.org/docs/master/distributed.html)
-[参考资料5](https://zhuanlan.zhihu.com/p/72939003)
-[参考资料6-RingAllReduce](https://andrew.gibiansky.com/blog/machine-learning/baidu-allreduce/)
-[参考资料7](https://mp.weixin.qq.com/s?__biz=MzI4ODg3NDY2NQ==&mid=2247484022&idx=2&sn=1ba381dc846257507c30599fa2b24c18&chksm=ec368bb0db4102a68378203f667e698e078d623c347c5499541435a3e77a5f7b504452e22b29&token=1461052041&lang=zh_CN&scene=21#wechat_redirect)
-[参考资料8](https://mp.weixin.qq.com/s?__biz=MzI4ODg3NDY2NQ==&mid=2247483977&idx=1&sn=01780e110a09d8b16c9e15dd2ebe1613&chksm=ec368b8fdb41029971242dd982bcdf805a8527a71c3c4d26dedc6486ac025e554c1758da9f0b&token=1618065730&lang=zh_CN&scene=21#wechat_redirect)
-[参考资料9](https://zhuanlan.zhihu.com/p/343951042)
-[参考资料10](https://zhuanlan.zhihu.com/p/358974461?utm_id=0)
-[参考资料11](https://www.cnblogs.com/rossiXYZ/p/15142807.html)
-[参考资料12](https://zhuanlan.zhihu.com/p/76638962)
-[参考资料13-torch.distribute](https://pytorch.org/docs/stable/distributed.html?highlight=torch+distributed#module-torch.distributed)
+[参考资料0](https://pytorch.org/docs/stable/notes/ddp.html)<br>
+[参考资料1](https://pytorch.org/tutorials/intermediate/ddp_tutorial.html)<br>
+[参考资料2](https://pytorch.org/tutorials/intermediate/dist_tuto.html)<br>
+[参考资料3](https://pytorch.org/docs/master/nn.html#dataparallel-layers-multi-gpu-distributed)<br>
+[参考资料4](https://pytorch.org/docs/master/distributed.html)<br>
+[参考资料5](https://zhuanlan.zhihu.com/p/72939003)<br>
+[参考资料6-RingAllReduce](https://andrew.gibiansky.com/blog/machine-learning/baidu-allreduce/)<br>
+[参考资料7](https://mp.weixin.qq.com/s?__biz=MzI4ODg3NDY2NQ==&mid=2247484022&idx=2&sn=1ba381dc846257507c30599fa2b24c18&chksm=ec368bb0db4102a68378203f667e698e078d623c347c5499541435a3e77a5f7b504452e22b29&token=1461052041&lang=zh_CN&scene=21#wechat_redirect)<br>
+[参考资料8](https://mp.weixin.qq.com/s?__biz=MzI4ODg3NDY2NQ==&mid=2247483977&idx=1&sn=01780e110a09d8b16c9e15dd2ebe1613&chksm=ec368b8fdb41029971242dd982bcdf805a8527a71c3c4d26dedc6486ac025e554c1758da9f0b&token=1618065730&lang=zh_CN&scene=21#wechat_redirect)<br>
+[参考资料9](https://zhuanlan.zhihu.com/p/343951042)<br>
+[参考资料10](https://zhuanlan.zhihu.com/p/358974461?utm_id=0)<br>
+[参考资料11](https://www.cnblogs.com/rossiXYZ/p/15142807.html)<br>
+[参考资料12](https://zhuanlan.zhihu.com/p/76638962)<br>
+[参考资料13-torch.distribute](https://pytorch.org/docs/stable/distributed.html?highlight=torch+distributed#module-torch.distributed)<br>
