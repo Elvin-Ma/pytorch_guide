@@ -54,7 +54,7 @@ def spmd_main(local_world_size, local_rank):
         key: os.environ[key]
         for key in ("MASTER_ADDR", "MASTER_PORT", "RANK", "WORLD_SIZE")
     }
-    
+
     if sys.platform == "win32":
         # Distributed package only covers collective communications with Gloo
         # backend and FileStore on Windows platform. Set init_method parameter
@@ -72,7 +72,7 @@ def spmd_main(local_world_size, local_rank):
             init_method = f"file:///{os.path.join(temp_dir, 'ddp_example')}"
         dist.init_process_group(backend="gloo", init_method=init_method, rank=int(env_dict["RANK"]), world_size=int(env_dict["WORLD_SIZE"]))
     else:
-        print(f"[{os.getpid()}] Initializing process group with: {env_dict}")  
+        print(f"[{os.getpid()}] Initializing process group with: {env_dict}")
         dist.init_process_group(backend="nccl")
 
     print(
@@ -95,3 +95,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     # The main entry point is called directly without using subprocess
     spmd_main(args.local_world_size, args.local_rank)
+    print("run command_demo.py successfully !!!")

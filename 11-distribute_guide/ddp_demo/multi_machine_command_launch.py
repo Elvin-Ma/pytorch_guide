@@ -15,6 +15,7 @@ def main():
     trans = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (1.0,))])
     data_set = torchvision.datasets.MNIST('~/DATA/', train=True,
                                           transform=trans, target_transform=None, download=True)
+    train_sampler = torch.utils.data.distributed.DistributedSampler(data_set)
     data_loader_train = torch.utils.data.DataLoader(dataset=data_set,
                                                     batch_size=256,
                                                     sampler=train_sampler,
