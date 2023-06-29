@@ -27,6 +27,7 @@
 
 **scatter reduce**
 - ![scatter reduce](https://pic3.zhimg.com/v2-4590aeb5fd981b1e6f926cc68605884a_b.webp)
+
 **all gather**
 - ![all gather](https://pic4.zhimg.com/80/v2-c9df34575d7d95ec87d85575d25d6f37_720w.webp)
 
