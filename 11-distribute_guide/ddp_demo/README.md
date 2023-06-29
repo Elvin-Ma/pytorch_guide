@@ -24,8 +24,11 @@
 ## 1.4 Ring AllReduce 原理
 - [Ring AllReduce 1](https://picture.iczhiku.com/weixin/message1570798743118.html)
 - [Ring AllReduce 2](https://andrew.gibiansky.com/blog/machine-learning/baidu-allreduce/#)
+
+**scatter reduce**
 - ![scatter reduce](https://pic3.zhimg.com/v2-4590aeb5fd981b1e6f926cc68605884a_b.webp)
-- ![all gather](https://pic4.zhimg.com/v2-c9df34575d7d95ec87d85575d25d6f37_b.webp)
+**all gather**
+- ![all gather](https://pic4.zhimg.com/80/v2-c9df34575d7d95ec87d85575d25d6f37_720w.webp)
 
 # 2. 常用参数（ARGS）总结
 - node: 物理节点，可以是一台机器，也可以是一个容器，节点内部可以有多个GPU；
