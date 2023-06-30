@@ -17,7 +17,7 @@
 # 自动微分机制(auto grad) 重点：
 - pytorch中 正向forward 对我们用户是可见的，但是backward对我们用户是不可见的；
 - 一般情况下，每一个正向的函数，都对应一个反向的函数（grad_fn--> Tensor中）；
-- tensor：requires_grad = True 
+- tensor：requires_grad = True
 - tensor: grad --> tensor 中存储grad的地方；
 - tensor: grad_fn --> 存储我们反向函数的地方
 - tesnor: is_leaf --> 这个tensor 是不是 叶子节点；
@@ -46,18 +46,18 @@
 ```python
 with torch.no_grad():
     v = y.view(5, 5)
-    v.sub_(y.grad * 0.1) 
+    v.sub_(y.grad * 0.1)
 
     # 底层的实现机制，sub_ 在c++ 层面上是经过多层的函数调用；
     # sub_ 底层会有一个新tensor的创建过程的；
-    y.sub_(0.1 * y.grad) 
+    y.sub_(0.1 * y.grad)
 ```
 1. 使用retain_grad 保存中间tensor 的梯度
 ** retain_grad**
 ```python
 for i in range(100):
     y.retain_grad()
-    z = torch.matmul(y, x) + b # linear layer    
+    z = torch.matmul(y, x) + b # linear layer
     output = torch.sigmoid(z)
     label = torch.Tensor([0, 0, 1, 0, 0])
     loss = (output-label).var() # l2 loss
@@ -169,7 +169,7 @@ print(f"\nCall after zeroing gradients\n{inp.grad}")
 # 梯度累加 和 梯度清0**
 - 多条路径：梯度累加 --> 正确的
 - 多次run backward的梯度累加 --> 我们应该避免
-- 怎么样避免： tensor.grad.zero_() 
+- 怎么样避免： tensor.grad.zero_()
 - 下节课：model.zero_grad()
 
 **中间tensor的梯度控制**
@@ -205,7 +205,7 @@ print(f"\nCall after zeroing gradients\n{inp.grad}")
  - 用起来不方便，搭建模型也不方便；
  - 哪些参数需要设置requires_grad？
  - 保存模型：保存哪些东西？
- - matmul：那一个是weight 哪一个是activation呢？ 
+ - matmul：那一个是weight 哪一个是activation呢？
  - weight 的初始化；
  - 解决思路：nn
 
@@ -214,7 +214,7 @@ print(f"\nCall after zeroing gradients\n{inp.grad}")
 
  # 扩展 extension（不需要去看）
  - grad_fn 和 grad 等相关信息 是放到Tensor中的；
-  
+
  ## autograd是什么
 - variable.h: struct TORCH_API AutogradMeta
 - grad_ ：存储当前Variable实例的梯度，本身也是一个Variable。
