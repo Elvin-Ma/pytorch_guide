@@ -31,7 +31,7 @@ def example(rank, world_size):
     optimizer.step()
 
 def main():
-    world_size = 2
+    world_size = 1
     mp.spawn(example,
         args=(world_size,),
         nprocs=world_size,

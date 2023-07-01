@@ -85,6 +85,9 @@ python -m torch.distributed.launch --nproc_per_node=2 --nnode=1 --node_rank=0 co
 
 # use python file
 python /home/mtn/miniconda3/lib/python3.8/site-packages/torch/distributed/launch.py --nnode=1 --node_rank=0 --nproc_per_node=2 command_demo.py --local_world_size=2
+
+# python2.0 
+torchrun command_demo.py --local_world_size=1
 ```
 
 ## 4.5 多机分布式：每个进程占用一张卡
