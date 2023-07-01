@@ -4,13 +4,14 @@
 
 ## 1.1 DataParallel概念
 - 当一张 GPU 可以存储一个模型时，可以采用数据并行得到更准确的梯度或者加速训练，
-- 即每个 GPU 复制一份模型，将一批样本分为多份输入各个模型并行计算。
+- 即每个 GPU 复制一份模型;
+- 将一批样本(inputs--> activation)分为多份输入各个模型并行计算。
 - 因为求导以及加和都是线性的，数据并行在数学上也有效。
 
 ## 1.2 DDP 概念及原理
 - **DDP 也是数据并行，所以每张卡都有模型和输入。我们以多进程多线程为例，每起一个进程，该进程的 device[0] 都会从本地复制模型，如果该进程仍有多线程，就像 DP，模型会从 device[0] 复制到其他设备。**
 - **DDP 通过 Reducer 来管理梯度同步。为了提高通讯效率， Reducer 会将梯度归到不同的桶里（按照模型参数的 reverse order， 因为反向传播需要符合这样的顺序），一次归约一个桶。其中桶的大小为参数 bucket_cap_mb 默认为 25，可根据需要调整。下图即为一个例子。可以看到每个进程里，模型参数都按照倒序放在桶里，每次归约一个桶。**
-[桶的案例](https://user-images.githubusercontent.com/16999635/72401724-d296d880-371a-11ea-90ab-737f86543df9.png)
+![桶的案例](https://user-images.githubusercontent.com/16999635/72401724-d296d880-371a-11ea-90ab-737f86543df9.png)
 [pytorch 案例地址](https://pytorch.org/docs/stable/notes/ddp.html)
 - **DDP 通过在构建时注册 autograd hook 进行梯度同步。反向传播时，当一个梯度计算好后，相应的 hook 会告诉 DDP 可以用来归约。当一个桶里的梯度都可以了，Reducer 就会启动异步 allreduce 去计算所有进程的平均值。allreduce 异步启动使得 DDP 可以边计算边通信，提高效率。当所有桶都可以了，Reducer 会等所有 allreduce 完成，然后将得到的梯度写到 param.grad。**
 
