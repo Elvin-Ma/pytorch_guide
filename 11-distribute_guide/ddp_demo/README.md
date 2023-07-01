@@ -26,6 +26,9 @@
 - [Ring AllReduce 1](https://picture.iczhiku.com/weixin/message1570798743118.html)
 - [Ring AllReduce 2](https://andrew.gibiansky.com/blog/machine-learning/baidu-allreduce/#)
 
+**Ring AllReduce**
+- ![Ring AllReduce](https://andrew.gibiansky.com/blog/machine-learning/baidu-allreduce/images/ring-gpus.png)
+
 **scatter reduce**
 - ![scatter reduce](https://pic3.zhimg.com/v2-4590aeb5fd981b1e6f926cc68605884a_b.webp)
 
