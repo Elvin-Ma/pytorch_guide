@@ -10,8 +10,11 @@
 - DP(data parallism) : 单机多卡
 - DDP(Distribute data parallism) ： 可以单机多卡，也可以 多机多卡
 - 数据并行 --> 拆分数据 --> 在batch 维度上拆分
+
 **除了数据并行，模型并行（）**
+
 [模型并行](https://pytorch.org/tutorials/intermediate/model_parallel_tutorial.html)
+
 ![模型并行原理图](https://picx.zhimg.com/80/v2-528d241081fb4c35cde7c37c7bd51653_720w.webp?source=1940ef5c)
 
 # DP（是一种数据并行方式）
