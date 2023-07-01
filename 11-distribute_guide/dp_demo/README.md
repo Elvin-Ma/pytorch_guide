@@ -1,6 +1,6 @@
 # 1. DP（DataParalle）Summary
 
-## 数据并的概念
+## 数据并行的概念
 当一张 GPU 可以存储一个模型时，可以采用数据并行得到更准确的梯度或者加速训练：<br>
 即每个 GPU 复制一份模型，将一批样本分为多份输入各个模型并行计算。<br>
 因为求导以及加和都是线性的，数据并行在数学上也有效。<br>
@@ -35,10 +35,12 @@ python dp_hello.py
 **运行 dp_demo.py**
 ```shell
 python dp_demo.py
-```
+
+result:
 >>> data shape:  torch.Size([64, 1, 28, 28])
 >>>  =============x shape:  torch.Size([32, 1, 28, 28])
 >>> =============x shape:  torch.Size([32, 1, 28, 28])
+```
 
 # 3. DP 的优缺点
 - 负载不均衡：device[0] 负载大一些；

@@ -13,8 +13,9 @@ device = torch.device("cuda:0" if USE_CUDA else "cpu")
 
 # 加载数据集
 train_dataset = datasets.MNIST(root="./data", train=True, transform=transforms.ToTensor(), download=True)
-train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset, num_replicas=2, rank=0)
-train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=False, sampler=train_sampler)
+# train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset, num_replicas=2, rank=0) # update num_replicas to gpus num
+# train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=False, sampler=train_sampler)
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=False)
 
 # 定义模型
 class Net(nn.Module):
@@ -31,10 +32,10 @@ class Net(nn.Module):
         x = self.fc2(x)
         return x
 
-model = Net()
+model = Net().to(device)
 
 # 将模型复制到多个GPU上
-model = nn.DataParallel(model).to(device)
+# model = nn.DataParallel(model).to(device)
 
 # 定义损失函数和优化器
 content = nn.CrossEntropyLoss()
