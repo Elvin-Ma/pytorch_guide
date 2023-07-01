@@ -14,8 +14,8 @@
 2. 所有梯度整合到 device[0]；
 3. device[0] 进行参数更新，其他卡拉取 device[0] 的参数进行更新；
 
-[DP 原理图1](https://pic3.zhimg.com/80/v2-1cee4e8fd9e2d4dce24b0aa0a47f8c86_1440w.webp)
-[DP 原理图2](https://pic1.zhimg.com/80/v2-5c5b0d8e3d7d6653a9ebd47bac93090c_1440w.webp)
+![DP 原理图1](https://pic3.zhimg.com/80/v2-1cee4e8fd9e2d4dce24b0aa0a47f8c86_1440w.webp)
+![DP 原理图2](https://pic1.zhimg.com/80/v2-5c5b0d8e3d7d6653a9ebd47bac93090c_1440w.webp)
 
 # 2. code implement
 ## pytorch 相关源码
