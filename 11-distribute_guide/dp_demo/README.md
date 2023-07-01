@@ -29,8 +29,10 @@ class DataParallel(Module):
 **运行 dp_hello.py**
 ```shell
 python dp_hello.py
-```
+
+output:
 >>> output: Let's use 2 GPUs!
+```
 
 **运行 dp_demo.py**
 ```shell

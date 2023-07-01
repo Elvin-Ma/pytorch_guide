@@ -32,10 +32,10 @@ class Net(nn.Module):
         x = self.fc2(x)
         return x
 
-model = Net().to(device)
+model = Net()
 
 # 将模型复制到多个GPU上
-# model = nn.DataParallel(model).to(device)
+model = nn.DataParallel(model).to(device)
 
 # 定义损失函数和优化器
 content = nn.CrossEntropyLoss()

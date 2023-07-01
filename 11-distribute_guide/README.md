@@ -1,5 +1,5 @@
 # 并行训练
-[并行训练套路](https://pica.zhimg.com/80/v2-356c1e79ec09ef1e4a35dde50ba87189_720w.webp?source=1940ef5c)
+![并行训练套路](https://pica.zhimg.com/80/v2-356c1e79ec09ef1e4a35dde50ba87189_720w.webp?source=1940ef5c)
 - 数据并行（Data Parallelism）——在不同的GPU上运行同一批数据的不同子集；
 - 流水并行（Pipeline Parallelism）——在不同的GPU上运行模型的不同层；
 - 模型并行（Tensor Parallelism）——将单个数学运算（如矩阵乘法）拆分到不同的GPU上运行；
@@ -11,10 +11,10 @@
 - 数据并行 --> 拆分数据 --> 在batch 维度上拆分
 **除了数据并行，模型并行（）**
 [模型并行](https://pytorch.org/tutorials/intermediate/model_parallel_tutorial.html)
-[模型并行原理图](https://picx.zhimg.com/80/v2-528d241081fb4c35cde7c37c7bd51653_720w.webp?source=1940ef5c)
+![模型并行原理图](https://picx.zhimg.com/80/v2-528d241081fb4c35cde7c37c7bd51653_720w.webp?source=1940ef5c)
 
 # DP（是一种数据并行方式）
-[数据并行原理图](https://pic1.zhimg.com/80/v2-47a5f6f4ac3bcd1c355d604367802231_720w.webp?source=1940ef5c)
+![数据并行原理图](https://pic1.zhimg.com/80/v2-47a5f6f4ac3bcd1c355d604367802231_720w.webp?source=1940ef5c)
 - 它将模型的参数复制到多个GPU上，每个GPU都使用相同的数据集进行训练；
 - 每个GPU上的模型参数独立更新，然后将所有GPU上的参数进行同步。
 - DP的优点是易于使用和实现，并且适用于大多数模型。
