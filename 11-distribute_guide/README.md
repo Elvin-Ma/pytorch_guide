@@ -1,6 +1,6 @@
-# 并行训练
+ls# 并行训练
 **并行训练几种模式**
-![并行训练套路](https://pica.zhimg.com/80/v2-356c1e79ec09ef1e4a35dde50ba87189_720w.webp?source=1940ef5c)
+[并行训练套路](https://pica.zhimg.com/80/v2-356c1e79ec09ef1e4a35dde50ba87189_720w.webp?source=1940ef5c)
 - 数据并行（Data Parallelism）——在不同的GPU上运行同一批数据的不同子集；
 - 流水并行（Pipeline Parallelism）——在不同的GPU上运行模型的不同层；
 - 模型并行（Tensor Parallelism）——将单个数学运算（如矩阵乘法）拆分到不同的GPU上运行；
