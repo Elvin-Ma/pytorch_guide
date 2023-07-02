@@ -120,6 +120,10 @@ print("eager:", timed(lambda: evaluate(model, inp))[1])
 print("compile:", timed(lambda: evaluate_opt(model, inp))[1])
 
 ```
+## 运行时间
+- eager: 2.24236865234375
+- compile: 5.829416015625
+
 
 **多次运行**
 ```python
@@ -148,6 +152,33 @@ speedup = eager_med / compile_med
 print(f"(eval) eager median: {eager_med}, compile median: {compile_med}, speedup: {speedup}x")
 print("~" * 10)
 ```
+
+# 时间比较：
+eager eval time 0: 1.0958094596862793
+eager eval time 1: 0.00669097900390625
+eager eval time 2: 0.0030019283294677734
+eager eval time 3: 0.0027256011962890625
+eager eval time 4: 0.002809286117553711
+eager eval time 5: 0.0030982494354248047
+eager eval time 6: 0.0053424835205078125
+eager eval time 7: 0.005318403244018555
+eager eval time 8: 0.00517725944519043
+eager eval time 9: 0.005010128021240234
+~~~~~~~~~~
+
+compile eval time 0: 4.698624849319458
+compile eval time 1: 0.0018777847290039062
+compile eval time 2: 0.002084016799926758
+compile eval time 3: 0.0025115013122558594
+compile eval time 4: 0.002210378646850586
+compile eval time 5: 0.0016803741455078125
+compile eval time 6: 0.002608776092529297
+compile eval time 7: 0.00214385986328125
+compile eval time 8: 0.0024738311767578125
+compile eval time 9: 0.0025794506072998047
+~~~~~~~~~~
+(eval) eager median: 0.005093693733215332, compile median: 0.0023421049118041992, speedup: 2.1748358528019547x
+~~~~~~~~~~
 
 ## 三种加速模式
 orch.compile 支持三种模式：

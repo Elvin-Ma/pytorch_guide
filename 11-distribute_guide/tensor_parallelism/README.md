@@ -1,5 +1,8 @@
 # PyTorch Tensor Parallelism for distributed training
 
+# Megatron-LM
+[Megatron-LM](https://github.com/NVIDIA/Megatron-LM#gpt-3-example)
+
 This example demonstrates SPMD Megatron-LM style tensor parallel by using
 PyTorch native Tensor Parallelism APIs, which include:
 
