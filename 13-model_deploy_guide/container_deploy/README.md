@@ -1,6 +1,8 @@
 # 镜像与容器 概念介绍
 **docker：管理镜像和容器**
+
 ![docker](https://www.runoob.com/wp-content/uploads/2016/04/docker01.png)
+
 [docker 入门教程](https://www.runoob.com/docker/docker-tutorial.html)
 
 # 理解docker
@@ -12,12 +14,12 @@
 - 镜像是可以保存的，就可以不用每次都run dockerfile了。
 
 # 一些重要网站
-[docker 官网](https://www.docker.com)
-[docker github](https://github.com/docker/docker-ce)
-[docker guide page](https://dockerdocs.cn/get-started/index.html)
-[dockerfile]https://www.runoob.com/docker/docker-dockerfile.html
-[docker 命令查询](https://docs.docker.com/engine/reference/commandline/docker/)
-[dockerfile 命令查询](https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact)
+[docker 官网](https://www.docker.com)<br>
+[docker github](https://github.com/docker/docker-ce)<br>
+[docker guide page](https://dockerdocs.cn/get-started/index.html)<br>
+[dockerfile]https://www.runoob.com/docker/docker-dockerfile.html<br>
+[docker 命令查询](https://docs.docker.com/engine/reference/commandline/docker/)<br>
+[dockerfile 命令查询](https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact)<br>
 
 #得到image的几种方法
 方法1：docker pull    # 拉取仓库的镜像
@@ -90,4 +92,4 @@ EXPOSE 5000
 # 启动应用程序
 CMD ["python", "app.py"]
 ```
-**docker build . 从上述dockerfile中创建镜像**
+**docker build -t . 从上述dockerfile中创建镜像**

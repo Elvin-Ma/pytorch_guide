@@ -1,6 +1,13 @@
 # 聊天机器人
+
+## 1.1 环境搭建
 ```shell
-pip install protobuf transformers==4.27.1 cpm_kernels
+- conda create -n python3.10 python=3.10（建议）
+- pip install torch==1.13.1+cu116 torchvision==0.14.1+cu116 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu116
+- cd */wenda/requirements/ 
+- pip install -r requirements.txt # update transformers==4.27.1
+- pip install requirements-glm6b-lora.txt
+- pip install protobuf transformers==4.27.1 cpm_kernels
 ```
 ## coding
 ```python

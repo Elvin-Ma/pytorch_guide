@@ -3,10 +3,11 @@ project(mnist)
 set(CMAKE_CXX_STANDARD 14)
 
 # 设置自己的 torch 路径
-set(Torch_DIR /home/elvin/.conda/envs/pytorch_env/lib/python3.8/site-packages/torch/share/cmake/Torch)
+#set(Torch_DIR /home/elvin/.conda/envs/pytorch_env/lib/python3.8/site-packages/torch/share/cmake/Torch)
+set(Torch_DIR /home/elvin/miniconda3/envs/python3.10/lib/python3.10/site-packages/torch/share/cmake/Torch)
 find_package(Torch REQUIRED)
 
-option(DOWNLOAD_MNIST "Download the MNIST dataset from the internet" ON)
+option(DOWNLOAD_MNIST "Download the MNIST dataset from the internet" OFF)
 if (DOWNLOAD_MNIST)
   message(STATUS "Downloading MNIST dataset")
   execute_process(
