@@ -93,3 +93,5 @@ RANK：当前进程的排名，从0开始计数。
 MASTER_ADDR：主节点的IP地址或主机名。
 MASTER_PORT：主节点监听的端口号。
 
+# 参考文档
+[参考文献1-基本通信源语](https://redian.news/wxnews/385262)
