@@ -14,6 +14,8 @@
   cuda: 在Nvidia 的卡上跑模型要用到；
   cpu: 在cpu上跑模型；
   rocm: amd 显卡对应的计算平台；
+7. cuda 和 driver 版本对应：
+[cuda driver 对照表](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html)
 
 # conda 环境管理
 1. (base) C:\Users\86183> ： base ： 我们现在在base 这个环境里；
