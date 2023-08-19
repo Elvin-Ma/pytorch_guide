@@ -12,6 +12,8 @@ import os
 # 通过rank 和world_size 这两个参数，不同的计算节点可以进行通信和协调，共同完成模型训练的任务；
 def example(rank, world_size):
     # create default process group
+    import pdb
+    pdb.set_trace()
     print("=========rank: {}, world_size: {}".format(rank, world_size))
     dist.init_process_group("gloo", rank=rank, world_size=world_size)
     # create local model
