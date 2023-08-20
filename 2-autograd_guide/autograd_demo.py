@@ -177,7 +177,32 @@ def outer(f):
     inner.co = 0
     return inner
     
+def matmul_demo():
+    input = torch.randn(10, 3, 4)
+    mat2 = torch.randn(5, 1, 4, 5)
+    # res = torch.bmm(input, mat2)
+    # res = torch.mm(input, mat2)
+    res = torch.matmul(input, mat2)
+    res.is_leaf
+    print(res)
+    
+def autograd_demo():
+    data0 = torch.randn(2, 2, 4)
+    w_0 = torch.randn(2, 4, 3, requires_grad=True)
+    data2 = torch.bmm(data0, w_0)
+    data3 = torch.sigmoid(data2)
+    w_1 = torch.randn(2, 3, 5, requires_grad = True)
+    output = torch.matmul(data3, w_1)
+    # output.backward()
+    output.backward(torch.ones_like(output))
+    
+    w_0 = w_0 - 0.001* w_0.grad
+
+    print("run autograd_demo finished !!!")
+          
 if __name__ == "__main__":
+    autograd_demo()
+    # matmul_demo()
     # reqiregrad_set()
     # autograd_demo_v2()
     # internal_grad_demo()

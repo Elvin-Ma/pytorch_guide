@@ -3,34 +3,34 @@ import numpy as np
 
 def tensor_create():
   # 方式1
-  # data = [[1, 2],[3, 4]] # python list
-  # x_data = torch.tensor(data)
-  # x_data2 = torch.tensor((1, 2, 3))
-  # # x_data3 = torch.tensor({"a": 5}) # fail
-  # print("x_data2: ", x_data2)
+  data = [[1, 2],[3, 4]] # python list
+  x_data = torch.tensor(data) # 
+  x_data2 = torch.tensor((1, 2, 3))
+  # x_data3 = torch.tensor({"a": 5}) # fail
+  print("x_data2: ", x_data2)
   
   # 方式2
-  # data = torch.ones(1, 2, 3)
-  # data1 = torch.zeros(1, 3,4)
-  # data2 = torch.randn(3, 4, 5)
-  # data3 = torch.eye(4, 5)
-  # data4 = torch.randint(5, (2, 10))
-  # print("data type: ", type(data4))
-  # print("data2: ", data4)
+  data = torch.ones(1, 2, 3)
+  data1 = torch.zeros(1, 3,4)
+  data2 = torch.randn(3, 4, 5)
+  data3 = torch.eye(4, 5)
+  data4 = torch.randint(5, (2, 10))
+  print("data type: ", type(data4))
+  print("data2: ", data4)
   
   # 方式3
-  # data0 = torch.Tensor([1, 2, 3])
-  # data1 = torch.ones_like(data0)
-  # data2 = torch.empty_like(data0)
+  data0 = torch.Tensor([1, 2, 3])
+  data1 = torch.ones_like(data0)
+  data2 = torch.empty_like(data0)
   # data3 = torch.empty_like(data0)
-  # print("data: ", data2)
+  print("data: ", data2)
   
   # 方式4
   np_array = np.array([1, 2, 3])
   tensor_numpy = torch.from_numpy(np_array)
   # tensor_numpy2 = torch.Tensor(np_array) # deepcopy 了一份数据
   np_array[0] = 100
-  # data_numpy = tensor_numpy.numpy()
+  data_numpy = tensor_numpy.numpy()
   # print("data numpy: ", type(data_numpy))
   print("numpy tensor: ", tensor_numpy)
 
@@ -47,6 +47,11 @@ def tensor_struct():
   # print("stride: ", tensor.stride())
   # print("device: ", tensor.device)
   # .... 其它参考 /lib/python3.8/site-packages/torch/_C/__init__.pyi
+  
+  # tensor / ndarray
+  # 1. meta_data + raw_data;
+  # 2 meta_data: shape/dtype/stride/dim/device ...
+  # 3. raw_data: data_ptr
 
   # raw data
   print("pytorch data: \n", tensor)
@@ -118,21 +123,24 @@ def numpy_with_torch_tensor():
 
 def tensor_to_demo():
   tensor = torch.ones(4, 5)
-  print("tensor dtype: ", tensor.dtype)
+  # print("tensor dtype: ", tensor.dtype)
+  # tensor = tensor.to(torch.float32)
   # print("tensor device: ", tensor.device)
   
+  # H2D : H: host(cpu), D: device(GPU) --> ;
   tensor_0 = tensor.to(torch.int32).to("cuda:0") # 数据的搬迁 h2d: h: host d:device(gpu)
   # print("tensor device: ", tensor_0.device)
   
-  # tensor_1 = tensor.cuda(0)
+  # tensor_1 = tensor.cuda(0).cpu()
   # print("tensor1 dtype: ", tensor_1.device)
   
-  # if torch.cuda.is_available():
-  #   device = torch.device("cuda:0")
-  # else:
-  #   device = torch.device("cpu")
+  if torch.cuda.is_available():
+    device = torch.device("cuda:0")
+  else:
+    device = torch.device("cpu")
     
   # tensor_2 = tensor.to(device)
+  # print(tensor_2.device)
   # tensor_3 = tensor.to(device)
   
   # #dtype 转化
@@ -143,8 +151,8 @@ def tensor_to_demo():
 
   # # 1. 获取tensor0 的设备， 2 完成设备上的数据copy
   tensor_5 = tensor.to(tensor_0).cpu()
-  tensor_6 = tensor.cuda() + tensor_5
-  print(tensor_5.device)
+  # tensor_6 = tensor.cuda() + tensor_5
+  # print(tensor_5.device)
   print(tensor_5.dtype)
   
 def id_with_ptr():
@@ -178,7 +186,7 @@ def broadcast_demo():
   
 def inplace_demo():
   a = torch.ones(3, 5)
-  b = a.add_(5) # inplace 操作 一定要小心
+  b = a.add_(5) # inplace 操作 一定要小心 --> 
   c = a.add(10)
   print("tensor_a data_ptr: ", a)
   print("tensor_b data_ptr: ", b)
@@ -209,10 +217,18 @@ def inplace_demo():
 #   # print("c stride: ", c.stride())
   
 def reshape_vs_view():
-  a = torch.randn(4, 6)
-  b = a.T
-  c = b.reshape(3, 8)
-  d = b.contiguous().view(3, 8)
+  data0 = torch.randn(4, 6) # 24
+  data1 = data0.reshape(6, 4)
+  data2 = data0.view(6, 4) # reshape 和 view 相同
+  data3 = data0.transpose(0, 1) # data uncontiguous
+  
+  # data5 = data3.view(3, 8) 
+  datat = data3.reshape(3, 8) # reshape 和 view 不同
+  # a = torch.randn(3, 4, 2, 5)
+  # data4 = data3.contiguous() # 完成了数据的copy
+  
+  
+  print("reshape")
   
 def tensor_api_demo():
   a = torch.Tensor()

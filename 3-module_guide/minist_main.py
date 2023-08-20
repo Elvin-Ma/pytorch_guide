@@ -243,9 +243,9 @@ def container_demo():
     print("output shape: ", x.shape)  
     
 if __name__ == '__main__':
-    # main()
+    main()
     # parameters_demo()
     # function_demo()
     container_demo()
-    torch.Tensor()
+    # torch.Tensor()
     print("run minist_main.py successfully !!!")

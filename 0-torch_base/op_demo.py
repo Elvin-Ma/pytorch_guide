@@ -118,7 +118,7 @@ def batch_morm_demo():
 
   # 创建批归一化层
   batch_norm = nn.BatchNorm2d(num_features, eps=eps, momentum=momentum)
-  # 定义层归一化的参数
+  # 定义层归一化的参数(laynorm)
   normalized_shape = [16, 8, 8]
 
   # 创建层归一化层
@@ -136,6 +136,7 @@ def batch_morm_demo():
 
   # 进行层归一化操作
   layer_norm_output = layer_norm(input)
+  print(layer_norm_output.shape)
 
 
 def conv_demo():
@@ -150,13 +151,16 @@ def conv_demo():
   print("output shape", output.shape)
   
 def linear_demo():
-  m = nn.Linear(20, 30) # 初始化 [m,k]*[k,n] --> [m,n]
+  m = nn.Linear(20, 30) # 初始化 [*,k]*[k,n] --> [*,n] --> weight bias : 自动帮我们做了初始化
   input = torch.randn(512, 20) # input 设定
-  output = m(input) # run
+  layer_0 = m(input) # run weight 是有一个转置的
+  
+  m_2 = nn.Linear(30, 40)
+  output = m_2(layer_0)
   print(output.size()) # bias 有没有， weight呢？
 
 def  maxpool_demo():
-   m = nn.MaxPool2d(3, stride=2, padding=1)
+   m = nn.AvgPool2d(3, stride=2, padding=1)
    # pool of non-square window
   #  m = nn.MaxPool2d((3, 2), stride=(2, 1))
    input = torch.randn(20, 16, 50, 32)
@@ -164,17 +168,22 @@ def  maxpool_demo():
    print("output shape: ", output.shape)
    
 def global_average_pool():
-  m = nn.AdaptiveAvgPool2d((2, 3))
+  m = nn.AdaptiveAvgPool2d((2, 2))
   input = torch.randn(1, 2048, 7, 7)
   output = m(input)
+  torch.onnx.export(m, input, "adaptiv_avg.onnx")
+  
   print("output shape: ", output.shape)
   
+torch.Tensor()
 def batch_norm_demo():
   m = nn.BatchNorm2d(100) # 100 就表示我们的channel 维度
   # Without Learnable Parameters
   # m = nn.BatchNorm2d(100, affine=False)
-  input = torch.randn(20, 100, 35, 45)
+  input = torch.randint(-100, 100, (20, 100, 35, 45)).float() # 哪些数据取均值（20*35*45） --> 取了多少个均值
   output = m(input)
+  # input2 = torch.randint(-10, 200, (20, 100, 35, 45)).float()
+  # output1 = m(input2)
   print("output shape: ", output.shape)
   
 def rnncell_onnx_get():
@@ -194,15 +203,51 @@ def rnn_onnx_get():
   output, hn = rnn(input, h0)
   torch.onnx.export(rnn, (input, h0), "rnn.onnx")
   # model = onnx.shape_inference.infer_shapes(onnx_model)
+  
+def flatten_demo():
+  input = torch.randn(32, 1, 5, 5)
+  # With default parameters
+  m = nn.Flatten()
+  output = m(input)
+  output.size()
+  # h.Size([32, 25])
+  # With non-default parameters
+  m = nn.Flatten(0, 2)
+  output = m(input)
+  output.size()
+  
+def embedding_demo():
+  # weight = torch.FloatTensor([[1, 2.3, 3], [4, 5.1, 6.3]])
+  # embedding = nn.Embedding.from_pretrained(weight)
+  # # Get embeddings for index 1
+  # input = torch.LongTensor([1]) # 35200 --> [0, 1, ... , 35199]
+  # output = embedding(input)
+  # print("output: ", output)
+  
+  embedding = nn.Embedding(10, 3)
+  # a batch of 2 samples of 4 indices each
+  input = torch.LongTensor([[1, 2, 4, 9], [4, 3, 2, 9]]) # int64_t
+  output = embedding(input)
+  print(output.shape)
+  
+def gather_demo():
+  t = torch.tensor([[1, 2], [3, 4]])
+  output = torch.gather(t, 0, torch.tensor([[0, 0], [1, 0]]))
+  print(output.shape)
+
 
 if __name__ == "__main__":
+  gather_demo()
   # deform_conv2d_demo(*params[0])
   # transposed_conv_demo()
   # group_conv_demo()
   # conv_demo()
-  linear_demo()
+  # linear_demo()
   # maxpool_demo()
   # global_average_pool()
   # batch_norm_demo()  
+  # batch_morm_demo()
   #rnn_onnx_get()
+  # flatten_demo()
+  embedding_demo()
   print("run op_demo.py successfully !!!")
