@@ -47,3 +47,18 @@ optimizer.add_param_group(new_params)
 ```
 
 ## 2 sgd
+```python
+# 定义两个模型和它们的参数
+model1 = ...
+model2 = ...
+model_params1 = model1.parameters()
+model_params2 = model2.parameters()
+
+# 创建优化器，并传递使用新的参数组名称
+optimizer = optim.SGD([{'params': model_params1}, {'params': model_params2}], lr=0.01)
+optimizer = optim.SGD([
+    {'params': params1, 'lr': 0.01, 'weight_decay': 0.001},
+    {'params': params2, 'lr': 0.1, 'weight_decay': 0.0001}
+])
+```
+
