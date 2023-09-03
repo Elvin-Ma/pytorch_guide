@@ -210,6 +210,6 @@ if __name__ == "__main__":
     # model_end2end()
     # function_compare()
     # module_hook_demo()
-    full_connect_demo()
+    # full_connect_demo()
     
     print("run module_demo.py successfully !!!")

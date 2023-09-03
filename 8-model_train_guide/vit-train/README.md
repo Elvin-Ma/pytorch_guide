@@ -1,12 +1,15 @@
-# Vision Transformer in PyTorch
+# 1. Vision Transformer in PyTorch introduce
+This example shows a simple implementation of [Vision Transformer](https://arxiv.org/abs/2010.11929)<br>
+on the [CIFAR-10](https://www.cs.toronto.edu/~kriz/cifar.html) dataset.<br>
 
-This example shows a simple implementation of [Vision Transformer](https://arxiv.org/abs/2010.11929) on the [CIFAR-10](https://www.cs.toronto.edu/~kriz/cifar.html) dataset.
-### Run
+# 2. 复现步骤
 ```bash
+# pytorch==1.13.0 + cu116; torchvision==1.14.1; numpy==1.23.5也可以
 pip3 install -r requirements.txt
 python3 main.py
 ```
-### Usage
+
+# 3. 其它选项
 ```bash
 usage: main.py [-h] [--no-cuda] [--patch-size PATCH_SIZE] [--latent-size LATENT_SIZE] [--n-channels N_CHANNELS] [--num-heads NUM_HEADS] [--num-encoders NUM_ENCODERS]
                [--dropout DROPOUT] [--img-size IMG_SIZE] [--num-classes NUM_CLASSES] [--epochs EPOCHS] [--lr LR] [--weight-decay WEIGHT_DECAY] [--batch-size BATCH_SIZE]

@@ -12,6 +12,10 @@ This implements training of popular model architectures, such as ResNet, AlexNet
 ## tiny-imagenet prepare
 [tiny-imagenet下载地址](http://cs231n.stanford.edu/tiny-imagenet-200.zip)
 
+## baidu clound
+链接：https://pan.baidu.com/s/1e5x08INc85eWkzDeQptE7Q?pwd=f3vr 
+提取码：f3vr 
+
 **unzip data**
 - upzip tiny-imagenet-200.zip
 

@@ -34,7 +34,7 @@ def save_demo_v1():
     model = Net()
     input = torch.rand(1, 1, 28, 28)
     output = model(input)
-    torch.save(model, "mnist.pt") # 4.6M
+    torch.save(model, "mnist.pt") # 4.6M : 保存
     
 def load_demo_v1():
     model = torch.load("mnist.pt")
@@ -71,9 +71,9 @@ def save_ckpt_demo():
     loss = torch.Tensor([0.25])
     epoch = 10
     checkpoint = {
-        # 'epoch': epoch,
+        'epoch': epoch,
         'model_state_dict': model.state_dict(),
-        # 'optimizer_state_dict': optimizer.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
         # 'loss': loss.item(),
         # 可以添加其他训练信息
     }
@@ -112,8 +112,8 @@ if __name__ == "__main__":
     # load_para_demo()
     # tensor_save()
     # load_to_gpu()
-    save_trace_model()
+    # save_trace_model()
     # load_trace_model()
-    # save_ckpt_demo()
+    save_ckpt_demo()
     # load_ckpt_demo()
     print("run save_load_demo.py successfully !!!")

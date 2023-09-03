@@ -8,21 +8,36 @@ from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
 import torch.nn.functional as F
 
+torch.nn.BatchNorm2d(64)
+
+# 1. model: 类：继承自 torch.nn.Module
 class Net(nn.Module):
+    # 2. 自己的__init__
     def __init__(self):
+        # 3. 初始化父类
         super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(1, 32, 3, 1)
+        # 4. 实例化我们需要用到的模块 (在init里初始化)
+        self.conv1 = nn.Conv2d(1, 32, 3, 1) # 1.构造了weight 和 bias；2. 完成了科学的初始化；3. requires_grad 自动设置
+        self.conv3 = nn.Conv2d(1, 32, 3, 1) # 
         self.conv2 = nn.Conv2d(32, 64, 3, 1)
         self.dropout1 = nn.Dropout(0.25)
         self.dropout2 = nn.Dropout(0.5)
         self.fc1 = nn.Linear(9216, 128)
         self.fc2 = nn.Linear(128, 10)
+        self.flatten = nn.Flatten(1)
+        self.relu = nn.ReLU()
+        # nn.Conv2d() --> F.conv2d --> torch.conv2d ---> torch/_C/_VariableFunctions.pyi::conv2d
 
+      # 5. 实现我们自己的forward
     def forward(self, x):
+        # self.conv2d = nn.Conv2d(1, 32, 3, 1)
+        # self.relu = nn.ReLU() # 没有任何可学习参数的，可以放到forward里
+        # forward 里我们callable
         x = self.conv1(x)
-        x = F.relu(x)
+        x = self.conv3(x) # 
+        x = self.relu(x)
         x = self.conv2(x)
-        x = F.relu(x)
+        x = F.relu(x) # 
         x = F.max_pool2d(x, 2)
         x = self.dropout1(x)
         x = torch.flatten(x, 1)
@@ -31,7 +46,8 @@ class Net(nn.Module):
         x = self.dropout2(x)
         x = self.fc2(x)
         output = F.log_softmax(x, dim=1)
-        return output
+        # 6. 把最终的结果返回
+        return output 
 
 class Net2(nn.Module):
     def __init__(self):
@@ -79,8 +95,8 @@ def train(args, model: Net2, device, train_loader, optimizer: torch.optim.Optimi
         optimizer.zero_grad() # 梯度清0
         output = model(data) # 前向计算 
         loss = F.nll_loss(output, target) # loss
-        loss.backward() # 反向传播
-        optimizer.step() # 更新参数
+        loss.backward() # 反向传播 --> 完成梯度的计算
+        optimizer.step() # 更新参数 --> 更新参数
         if batch_idx % args.log_interval == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
@@ -93,7 +109,7 @@ def test(model, device, test_loader):
     model.eval()
     test_loss = 0
     correct = 0
-    with torch.no_grad():
+    with torch.no_grad(): # no_grad
         for data, target in test_loader:
             data, target = data.to(device), target.to(device)
             output = model(data)
@@ -165,15 +181,15 @@ def main():
     dataset1 = datasets.MNIST('../data', train=True, download=True,
                        transform=transform)
     dataset2 = datasets.MNIST('../data', train=False,
-                       transform=transform)
+                       transform=transform) # torch.utils.data.Dataset --> 
     
     # 3. train_loader 是什么数据类型
     # pytorch的接口
-    train_loader = torch.utils.data.DataLoader(dataset1,**train_kwargs)
+    train_loader = torch.utils.data.DataLoader(dataset1,**train_kwargs) # 真正的取数据
     test_loader = torch.utils.data.DataLoader(dataset2, **test_kwargs)
 
     # 模型准备
-    model = Net2().to(device) # device
+    model = Net().to(device) # 1. 实例化一个模型，并且把模型加载到device ？ 
     
     # 优化器
     optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
@@ -185,8 +201,8 @@ def main():
         test(model, device, test_loader)
         scheduler.step() # 学习率更新 是按照 epoch 来进行的
         
-    x = torch.rand(1, 1, 28, 28).to(device)
-    torch.onnx.export(model, x, "minist.onnx")
+    # x = torch.rand(1, 1, 28, 28).to(device)
+    # torch.onnx.export(model, x, "minist.onnx")
 
     if args.save_model:
         torch.save(model, "mnist_cnn.pt")
@@ -246,6 +262,6 @@ if __name__ == '__main__':
     main()
     # parameters_demo()
     # function_demo()
-    container_demo()
+    # container_demo()
     # torch.Tensor()
     print("run minist_main.py successfully !!!")

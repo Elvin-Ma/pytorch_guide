@@ -280,9 +280,9 @@ class ModuleDemo(torch.nn.Module):
     def __init__(self):
         super(ModuleDemo, self).__init__()
         self.linear_1 = torch.nn.Linear(2, 3)
-        self.act_1 = torch.nn.Sigmoid()
+        self.act_1 = torch.nn.LeakyReLU()
         self.linear_2 = torch.nn.Linear(3, 2)
-        self.act_2 = torch.nn.Sigmoid()
+        self.act_2 = torch.nn.LeakyReLU()
         
     def forward(self, input):
         x = self.linear_1(input)
@@ -293,11 +293,16 @@ class ModuleDemo(torch.nn.Module):
         return output
     
 def module_train():
+    torch.manual_seed(0)
     input = torch.tensor([5, 10]).reshape(1, 2).to(torch.float32)
     label = torch.tensor([0.01, 0.99]).reshape(1, 2)
     model = ModuleDemo()
     criteration = torch.nn.MSELoss()    
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.5)
+    # optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
+    # optimizer = torch.optim.Adagrad(model.parameters(), lr=0.1)
+    # optimizer = torch.optim.Adadelta(model.parameters(), lr=0.1)
+    # optimizer = torch.optim.AdamW(model.parameters(), lr=0.1)
     
     for i in range(100):
         optimizer.zero_grad()
@@ -305,7 +310,7 @@ def module_train():
         loss = criteration(output, label)
         loss.backward()
         optimizer.step()
-        print(f"=========loss {loss}")
+        print(f"=========loss[{i}]: {loss}")
     
 if __name__ == "__main__":
     # autograd_demo()

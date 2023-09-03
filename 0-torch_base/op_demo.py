@@ -235,6 +235,41 @@ def gather_demo():
   output = torch.gather(t, 0, torch.tensor([[0, 0], [1, 0]]))
   print(output.shape)
 
+class DropConnect(nn.Module):
+    def __init__(self, p=0.5):
+        super(DropConnect, self).__init__()
+        self.p = p  # DropConnect 概率
+
+    def forward(self, x):
+        if not self.training or self.p == 0:
+            return x
+
+        # 生成 DropConnect 掩码
+        mask = torch.empty_like(x).bernoulli_(1 - self.p)
+        mask = mask / (1 - self.p)  # 缩放掩码，使期望值保持不变
+
+        # 应用 DropConnect 掩码
+        x = x * mask
+        return x
+
+class Dropout(nn.Module):
+    def __init__(self, p=0.5, inplace=False):
+        super(Dropout, self).__init__()
+        self.p = p  # Dropout 概率
+        self.inplace = inplace
+
+    def forward(self, x):
+        if not self.training or self.p == 0:
+            return x
+
+        # 生成 Dropout 掩码
+        mask = torch.empty_like(x).bernoulli_(1 - self.p)
+        if self.inplace:
+            x.mul_(mask)
+        else:
+            x = x * mask
+
+        return x
 
 if __name__ == "__main__":
   gather_demo()
