@@ -35,7 +35,7 @@ parser.add_argument('-a', '--arch', metavar='ARCH', default='resnet18',
                         ' (default: resnet18)')
 parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
                     help='number of data loading workers (default: 4)')
-parser.add_argument('--epochs', default=90, type=int, metavar='N',
+parser.add_argument('--epochs', default=1, type=int, metavar='N',
                     help='number of total epochs to run')
 parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
                     help='manual epoch number (useful on restarts)')
@@ -226,8 +226,8 @@ def main_worker(gpu, ngpus_per_node, args):
     # Data loading code
     if args.dummy:
         print("=> Dummy data is used!")
-        train_dataset = datasets.FakeData(1281167, (3, 224, 224), 1000, transforms.ToTensor())
-        val_dataset = datasets.FakeData(50000, (3, 224, 224), 1000, transforms.ToTensor())
+        train_dataset = datasets.FakeData(1281167, (3, 224, 224), 200, transforms.ToTensor())
+        val_dataset = datasets.FakeData(50000, (3, 224, 224), 200, transforms.ToTensor())
     else:
         traindir = os.path.join(args.data, 'train')
         valdir = os.path.join(args.data, 'val')
@@ -324,6 +324,8 @@ def train(train_loader, model, criterion, optimizer, epoch, device, args):
 
         # compute output
         output = model(images)
+        # model.eval()
+        # torch.onnx.export(model, images, "resnet18_test.onnx")
         loss = criterion(output, target)
 
         # measure accuracy and record loss
